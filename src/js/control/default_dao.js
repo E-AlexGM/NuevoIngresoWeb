@@ -77,66 +77,27 @@ class DefaultDAO {
   }
 
   _create(objeto) {
-  let salida = new Promise((resolve, reject) => {
-    fetch(`${this.URL}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(objeto),
-    })
-      .then((r) => {
-        if (r.status === 201) {
-          let resp = new DefaultResponse();
-          resp.datos = {
-            location: r.headers.get("Location")
-          };
-          resolve(resp);
-        } else {
-          let error = new DefaultError();
-          error.mensaje = r.headers.get("Process-Error") || 
-                          r.headers.get("Wrong-Parameter") || 
-                          `Error del servidor: ${r.status}`;
-          error.error = r;
-          reject(error);
-        }
-      })
-      .catch((e) => {
-        let error = new DefaultError();
-        error.mensaje = `Error al acceder al repositorio`;
-        error.error = e;
-        reject(error);
-      });
-  });
-  return salida;
-}
-
-_update(id, entidad) {
     let salida = new Promise((resolve, reject) => {
-      fetch(`${this.URL}${id}`, {
-        method: "PUT",
+      fetch(`${this.URL}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(entidad),
+        body: JSON.stringify(objeto),
       })
         .then((r) => {
-          if (r.status === 200) {
-            r.json()
-              .then((j) => {
-                let resp = new DefaultResponse();
-                resp.datos = j;
-                resolve(resp);
-              })
-              .catch((e) => {
-                let error = new DefaultError();
-                error.mensaje = `Error al parsear los datos: ${e.message}`;
-                error.error = e;
-                reject(error);
-              });
+          if (r.status === 201) {
+            let resp = new DefaultResponse();
+            resp.datos = {
+              location: r.headers.get("Location"),
+              id: r.headers.get("Location") ? r.headers.get("Location").split("/").pop() : null
+            };
+            resolve(resp);
           } else {
             let error = new DefaultError();
-            error.mensaje = `Error al modificar los datos: ${r.status}`;
+            error.mensaje = r.headers.get("Process-Error") || 
+                            r.headers.get("Wrong-Parameter") || 
+                            `Error del servidor: ${r.status}`;
             error.error = r;
             reject(error);
           }
@@ -149,6 +110,46 @@ _update(id, entidad) {
         });
     });
     return salida;
+  }
+
+  _update(id, entidad) {
+      let salida = new Promise((resolve, reject) => {
+        fetch(`${this.URL}${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(entidad),
+        })
+          .then((r) => {
+            if (r.status === 200) {
+              r.json()
+                .then((j) => {
+                  let resp = new DefaultResponse();
+                  resp.datos = j;
+                  resolve(resp);
+                })
+                .catch((e) => {
+                  let error = new DefaultError();
+                  error.mensaje = `Error al parsear los datos: ${e.message}`;
+                  error.error = e;
+                  reject(error);
+                });
+            } else {
+              let error = new DefaultError();
+              error.mensaje = `Error al modificar los datos: ${r.status}`;
+              error.error = r;
+              reject(error);
+            }
+          })
+          .catch((e) => {
+            let error = new DefaultError();
+            error.mensaje = `Error al acceder al repositorio`;
+            error.error = e;
+            reject(error);
+          });
+      });
+      return salida;
   }
 
   _delete(id) {
