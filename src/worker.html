@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=2048, initial-scale=1.0">
+    <title>worker</title>
+</head>
+<body>
+    <input type="button" value="Iniciar" onclick="iniciarWorker();" >
+    <input type="button" value="Matar" onclick="matarWorker();" >
+    <input type="button" value="Reiniciar Cuenta" onclick="reiniciarCuenta(100);" >
+    <div id="salida"></div>
+    <script>
+        let worker;
+
+        function iniciarWorker(){
+            if (typeof(worker) == "undefined") {
+                worker = new Worker("js/boundary/worker.js");
+            } 
+            worker.onmessage = function(event) {
+                document.getElementById("salida").innerHTML = event.data;
+            };
+        }
+        function matarWorker(){
+            if (worker) {
+                worker.terminate();
+                worker = undefined;
+            }
+        }
+        function reiniciarCuenta(_numero){
+            if (worker) {
+                worker.postMessage(_numero);
+            }
+
+        }
+    </script>
+</body>
+</html>
