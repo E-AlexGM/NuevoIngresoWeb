@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>estilos</title>
+  </head>
+  <body>
+    <style>
+      :root {
+        --fondo-pagina: #eeeeee;
+        --fondo-articulo: #ffffff;
+        --frente-articulo: #000000;
+        --fondo-encabezado: #b87d4b;
+        --frente-encabezado: #000000;
+      }
+
+      main {
+        display: grid;
+        height: 100vh;
+        grid-template-columns: 1fr 6fr;
+        grid-template-rows: 1fr 4fr 1fr;
+        grid-template-areas:
+          "navegacion encabezado"
+          "navegacion contenido"
+          "pie pie";
+      }
+
+      body {
+        background-color: var(--fondo-pagina);
+      }
+
+      header {
+        grid-area: encabezado;
+        background-color: var(--fondo-encabezado);
+        color: var(--frente-encabezado);
+      }
+
+      nav {
+        grid-area: navegacion;
+      }
+      article {
+        grid-area: contenido;
+        background-color: var(--fondo-articulo);
+        color: var(--frente-articulo);
+      }
+      footer {
+        grid-area: pie;
+      }
+
+      @media screen and (width >= 30em) {
+        main {
+          display: grid;
+          height: 100vh;
+          grid-template-columns: 1fr 6fr;
+          grid-template-rows: 1fr 4fr 1fr;
+          grid-template-areas:
+            "navegacion encabezado"
+            "navegacion contenido"
+            "pie pie";
+        }
+      }
+      @media screen and (width < 30em) {
+        main {
+          display: grid;
+          height: 100vh;
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr 4fr 1fr 1fr;
+          grid-template-areas:
+            "encabezado"
+            "contenido"
+            "navegacion"
+            "pie";
+        }
+      }
+    </style>
+    <main>
+      <article>Contenido</article>
+      <header>Encabezado</header>
+      <nav>Navegacion</nav>
+      <footer>Pie de pagina</footer>
+    </main>
+  </body>
+</html>
