@@ -6,3 +6,5 @@ class Pregunta {
         this.imagenUrl = "";
     }
 }
+
+export default Pregunta;
