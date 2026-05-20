@@ -21,13 +21,15 @@ suite("PreguntaDistractorDAO Unit Test", function () {
 
     suite("findRange()", function () {
         test("Debe delegar la llamada a _findRange con los parámetros recibidos", function () {
-            stubFetch = sinon.stub(cut, "_findRange").resolves();
+            const mockPromise = Promise.resolve("datos_findRange");
+            stubFetch = sinon.stub(cut, "_findRange").returns(mockPromise);
 
             const firstParam = 0;
             const maxParam = 10;
 
-            cut.findRange(firstParam, maxParam);
+            const resultado = cut.findRange(firstParam, maxParam);
 
+            chai.assert.equal(resultado, mockPromise);
             chai.assert.isTrue(stubFetch.calledOnce);
             chai.assert.isTrue(stubFetch.calledWithExactly(firstParam, maxParam));
         });
@@ -35,12 +37,14 @@ suite("PreguntaDistractorDAO Unit Test", function () {
 
     suite("create()", function () {
         test("Debe delegar la llamada a _create con el objeto recibido", function () {
-            stubFetch = sinon.stub(cut, "_create").resolves();
+            const mockPromise = Promise.resolve("datos_create");
+            stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
             const preguntaDistractor = { idDistractor: 1, correcto: false };
 
-            cut.create(preguntaDistractor);
+            const resultado = cut.create(preguntaDistractor);
 
+            chai.assert.equal(resultado, mockPromise);
             chai.assert.isTrue(stubFetch.calledOnce);
             chai.assert.isTrue(stubFetch.calledWithExactly(preguntaDistractor));
         });
@@ -48,14 +52,23 @@ suite("PreguntaDistractorDAO Unit Test", function () {
 
     suite("delete()", function () {
         test("Debe delegar la llamada a _delete con el id recibido", function () {
-            stubFetch = sinon.stub(cut, "_delete").resolves();
+            const mockPromise = Promise.resolve("datos_delete");
+            stubFetch = sinon.stub(cut, "_delete").returns(mockPromise);
 
             const idParam = "123";
 
-            cut.delete(idParam);
+            const resultado = cut.delete(idParam);
 
+            chai.assert.equal(resultado, mockPromise);
             chai.assert.isTrue(stubFetch.calledOnce);
             chai.assert.isTrue(stubFetch.calledWithExactly(idParam));
+        });
+    });
+
+    suite("Constructor", function () {
+        test("Debe invocar a super() y ajustar la URL base", function () {
+            chai.assert.isDefined(cut.URL);
+            chai.assert.isTrue(cut.URL.startsWith(cut.BASE_URL));
         });
     });
 });
