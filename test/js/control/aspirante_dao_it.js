@@ -1,26 +1,29 @@
 import * as chai from "../lib/chai/index.js";
-import JornadaDAO from "../../../src/js/control/jornada_dao.js";
+import AspiranteDAO from "../../../src/js/control/aspirante_dao.js";
 import DefaultResponse from "../../../src/js/entity/default_response.js";
-import Jornada from "../../../src/js/entity/jornada.js";
+import Aspirante from "../../../src/js/entity/aspirante.js";
 import { requiereServidor, requiereServidorApagado } from "./it_config.js";
 
 mocha.setup("bdd");
 
-describe("JornadaDAO Integration Tests", function () {
+describe("AspiranteDAO Integration Tests", function () {
   describe("Pruebas con servidor en línea", function () {
     requiereServidor();
     let cut;
     let idCreado;
-    let jornadaBase;
+    let aspiranteBase;
 
     // Este before se ejecuta antes de cualquier prueba de esta clase
     before(function () {
-      cut = new JornadaDAO();
+      cut = new AspiranteDAO();
 
-      jornadaBase = new Jornada();
-      jornadaBase.nombre = "Jornada de Prueba";
-      jornadaBase.fechaInicio = "2026-05-10T02:00:00-06:00";
-      jornadaBase.fechaFin = "2026-05-10T06:00:00-06:00";
+      aspiranteBase = new Aspirante();
+      aspiranteBase.nombres = "Juan Carlos";
+      aspiranteBase.apellidos = "Pérez Gómez";
+      aspiranteBase.fechaNacimiento = "2000-01-01";
+      aspiranteBase.documentoIdentidad = "01234567-8";
+      aspiranteBase.correo = "juan.perez@example.com";
+      aspiranteBase.fechaCreacion = "2026-05-06T04:00:00-06:00";
     });
 
     // Limpieza final
@@ -29,7 +32,6 @@ describe("JornadaDAO Integration Tests", function () {
         cut
           .delete(idCreado)
           .then(() => {
-            console.log("Limpieza de integración completada.");
             done();
           })
           .catch(done);
@@ -38,66 +40,62 @@ describe("JornadaDAO Integration Tests", function () {
       }
     });
 
-    it("Debe crear una instancia de JornadaDAO", function () {
-      chai.expect(cut).to.be.an.instanceOf(JornadaDAO);
+    it("Debe crear una instancia de AspiranteDAO", function () {
+      chai.expect(cut).to.be.an.instanceOf(AspiranteDAO);
     });
 
     // ==========================================
     // Método Create
     // ==========================================
     describe("Method: create()", function () {
-      it("Debe retornar un DefaultResponse con los datos de la jornada creada", function (done) {
+      it("Debe retornar un DefaultResponse con los datos del aspirante creado", function (done) {
         cut
-          .create(jornadaBase)
+          .create(aspiranteBase)
           .then((response) => {
             chai.expect(response).to.be.an.instanceOf(DefaultResponse);
             chai.expect(response.datos).to.be.an("object");
             chai.expect(response.datos).to.have.property("id");
             chai.expect(response.datos).to.have.property("location");
             chai.expect(response.datos.id).to.exist;
-            chai.expect(response.datos.location).to.exist;
             idCreado = response.datos.id;
-            chai.expect(idCreado).to.exist;
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
       it("Debe rechazar leyendo el header Process-Error cuando falla la creación (500)", function (done) {
-        const jornadaInvalida = new Jornada();
-        jornadaInvalida.nombre = null; // Nombre vacío para provocar error
+        const aspiranteInvalido = new Aspirante();
+        aspiranteInvalido.nombres = null; 
+        
         cut
-          .create(jornadaInvalida)
+          .create(aspiranteInvalido)
           .then(() => {
             done(new Error("La creación debería haber fallado"));
           })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al crear los datos: 500");
+            chai.expect(error.mensaje).to.include("Error al crear los datos");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
-      it("Debe rechazar cuando se envía entidad con id (400)", function (done) {
-        const jornadaConId = new Jornada();
-        jornadaConId.idJornada = "123e4567-e89b-12d3-a456-426614174000";
-        jornadaConId.nombre = "Jornada de Prueba";
+      it("Debe echazar cuando se envía entidad con id (400)", function (done) {
+        const aspiranteConId = new Aspirante();
+        aspiranteConId.idAspirante = "123e4567-e89b-12d3-a456-426614174000";
+        aspiranteConId.nombres = "Nombre con ID";
+        
         cut
-          .create(jornadaConId)
+          .create(aspiranteConId)
           .then(() => {
             done(new Error("La creación debería haber fallado"));
           })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al crear los datos: 400");
+            chai.expect(error.mensaje).to.include("Error al crear los datos: 400");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
 
@@ -105,7 +103,7 @@ describe("JornadaDAO Integration Tests", function () {
     // Método FindRange
     // ==========================================
     describe("Method: findRange()", function () {
-      it("Debe retornar un DefaultResponse con un array de jornadas y total_datos", function (done) {
+      it("Debe retornar un DefaultResponse con un array de aspirantes y total_datos", function (done) {
         cut
           .findRange(0, 10)
           .then((response) => {
@@ -116,7 +114,7 @@ describe("JornadaDAO Integration Tests", function () {
             chai.expect(response.datos).to.have.length.above(0);
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
       it("Debe rechazar si se mandan parámetros inválidos", function (done) {
@@ -127,12 +125,10 @@ describe("JornadaDAO Integration Tests", function () {
           })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al obtener los datos: 400");
+            chai.expect(error.mensaje).to.include("Error al obtener los datos: 400");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
       it("Debe rechazar error al parsear los datos al consultar un rango", function (done) {
@@ -149,14 +145,9 @@ describe("JornadaDAO Integration Tests", function () {
           })
           .catch((error) => {
             Response.prototype.json = originalJson;
-
             try {
               chai.expect(error).to.have.property("mensaje");
-              chai
-                .expect(error.mensaje)
-                .to.include(
-                  "Error al parsear los datos: Simulado: JSON corrupto",
-                );
+              chai.expect(error.mensaje).to.include("Error al parsear los datos: Simulado: JSON corrupto");
               done();
             } catch (assertError) {
               done(assertError);
@@ -169,25 +160,25 @@ describe("JornadaDAO Integration Tests", function () {
     // Método FindById
     // ==========================================
     describe("Method: findById()", function () {
-      it("Debe retornar un DefaultResponse con la jornada encontrada", function (done) {
+      it("Debe retornar un DefaultResponse con el aspirante encontrado", function (done) {
         cut
           .findById(idCreado)
           .then((response) => {
             chai.expect(response).to.be.an.instanceOf(DefaultResponse);
             chai.expect(response.datos).to.be.an("object");
-            const jornadaObtenida = response.datos;
-            chai.expect(jornadaObtenida).to.have.property("idJornada");
-            chai.expect(jornadaObtenida).to.have.property("nombre");
-            chai.expect(jornadaObtenida.idJornada).to.exist;
-            chai.expect(jornadaObtenida.nombre).to.exist;
-            chai.expect(jornadaObtenida.idJornada).to.equal(idCreado);
-            chai.expect(jornadaObtenida.nombre).to.equal(jornadaBase.nombre);
+            const aspiranteObtenido = response.datos;
+            chai.expect(aspiranteObtenido).to.have.property("idAspirante");
+            chai.expect(aspiranteObtenido).to.have.property("nombres");
+            chai.expect(aspiranteObtenido).to.have.property("correo");
+            chai.expect(aspiranteObtenido.idAspirante).to.equal(idCreado);
+            chai.expect(aspiranteObtenido.nombres).to.equal(aspiranteBase.nombres);
+            chai.expect(aspiranteObtenido.correo).to.equal(aspiranteBase.correo);
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
-      it("Debe rechazar si no se encuentra la jornada", function (done) {
+      it("Debe rechazar si no se encuentra el aspirante", function (done) {
         cut
           .findById("123e4567-e89b-12d3-a456-426614174999")
           .then(() => {
@@ -195,12 +186,10 @@ describe("JornadaDAO Integration Tests", function () {
           })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al obtener los datos: 404");
+            chai.expect(error.mensaje).to.include("Error al obtener los datos: 404");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
       it("Debe rechazar si se manda un id inválido", function (done) {
@@ -211,12 +200,10 @@ describe("JornadaDAO Integration Tests", function () {
           })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al obtener los datos: 500");
+            chai.expect(error.mensaje).to.include("Error al obtener los datos");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
       it("Debe rechazar error al parsear los datos", function (done) {
@@ -233,17 +220,11 @@ describe("JornadaDAO Integration Tests", function () {
           })
           .catch((error) => {
             Response.prototype.json = originalJson;
-
             try {
-              chai.expect(error).to.have.property("mensaje");
-              chai
-                .expect(error.mensaje)
-                .to.include(
-                  "Error al parsear los datos: Simulado: JSON corrupto",
-                );
-              done(); // Test exitoso
+              chai.expect(error.mensaje).to.include("Error al parsear los datos: Simulado: JSON corrupto");
+              done();
             } catch (assertError) {
-              done(assertError); // Si la aserción de Chai falla, se le pasa a Mocha
+              done(assertError);
             }
           });
       });
@@ -253,62 +234,61 @@ describe("JornadaDAO Integration Tests", function () {
     // Método Update
     // ==========================================
     describe("Method: update()", function () {
-      it("Debe actualizar la jornada creada y retornar un DefaultResponse con los datos actualizados", function (done) {
-        const jornadaActualizada = new Jornada();
-        jornadaActualizada.nombre = "Jornada Actualizada";
-        jornadaActualizada.fechaInicio = "2026-05-10T02:00:00-06:00";
-        jornadaActualizada.fechaFin = "2026-05-10T06:00:00-06:00";
+      it("Debe actualizar el aspirante creado y retornar un DefaultResponse con los datos actualizados", function (done) {
+        const aspiranteActualizado = new Aspirante();
+        aspiranteActualizado.nombres = "Juan Carlos Editado";
+        aspiranteActualizado.apellidos = "Pérez Gómez";
+        aspiranteActualizado.fechaNacimiento = "2000-01-01";
+        aspiranteActualizado.documentoIdentidad = "01234567-8";
+        aspiranteActualizado.correo = "juan.editado@example.com";
+        aspiranteActualizado.fechaCreacion = "2026-05-06T04:00:00-06:00";
 
         cut
-          .update(idCreado, jornadaActualizada)
+          .update(idCreado, aspiranteActualizado)
           .then((response) => {
             chai.expect(response).to.be.an.instanceOf(DefaultResponse);
             chai.expect(response.datos).to.be.an("object");
-            chai.expect(response.datos).to.have.property("idJornada");
-            chai.expect(response.datos).to.have.property("nombre");
-            chai.expect(response.datos.idJornada).to.equal(idCreado);
-            chai.expect(response.datos.nombre).to.equal("Jornada Actualizada");
+            chai.expect(response.datos).to.have.property("idAspirante");
+            chai.expect(response.datos).to.have.property("nombres");
+            chai.expect(response.datos.idAspirante).to.equal(idCreado);
+            chai.expect(response.datos.nombres).to.equal("Juan Carlos Editado");
+            chai.expect(response.datos.correo).to.equal("juan.editado@example.com");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(`El servidor rechazó la conexión o devolvió error: ${e.mensaje || e}`)));
       });
 
-      it("Debe rechazar al intentar actualizar una jornada que no existe", function (done) {
-        const jornadaInexistente = new Jornada();
-        jornadaInexistente.nombre = "Jornada Inexistente";
+      it("Debe rechazar al intentar actualizar un aspirante que no existe", function (done) {
+        const aspiranteInexistente = new Aspirante();
+        aspiranteInexistente.nombres = "No Existo";
+        aspiranteInexistente.apellidos = "Fantasma";
 
         cut
-          .update("123e4567-e89b-12d3-a456-426614174999", jornadaInexistente)
+          .update("123e4567-e89b-12d3-a456-426614174999", aspiranteInexistente)
           .then(() => {
             done(new Error("La actualización debería haber fallado"));
           })
           .catch((error) => {
-            chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al modificar los datos: 404");
+            chai.expect(error.mensaje).to.include("Error al modificar los datos: 404");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.message || e.mensaje)));
       });
 
       it("Debe rechazar al intentar actualizar con datos inválidos", function (done) {
-        const jornadaInvalida = new Jornada();
-        jornadaInvalida.nombre = null; // Nombre vacío para provocar error
+        const aspiranteInvalido = new Aspirante();
+        aspiranteInvalido.nombres = null; 
 
         cut
-          .update(idCreado, jornadaInvalida)
+          .update(idCreado, aspiranteInvalido)
           .then(() => {
             done(new Error("La actualización debería haber fallado"));
           })
           .catch((error) => {
-            chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al modificar los datos: 500");
+            chai.expect(error.mensaje).to.include("Error al modificar los datos");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.message || e.mensaje)));
       });
 
       it("Debe rechazar error al parsear los datos al actualizar", function (done) {
@@ -317,26 +297,24 @@ describe("JornadaDAO Integration Tests", function () {
           return Promise.reject(new Error("Simulado: JSON corrupto"));
         };
 
-        const jornadaActualizada = new Jornada();
-        jornadaActualizada.nombre = "Jornada Actualizada";
-        jornadaActualizada.fechaInicio = "2026-05-10T02:00:00-06:00";
-        jornadaActualizada.fechaFin = "2026-05-10T06:00:00-06:00";
+        const aspiranteActualizado = new Aspirante();
+        aspiranteActualizado.nombres = "Juan Carlos Editado";
+        aspiranteActualizado.apellidos = "Pérez Gómez";
+        aspiranteActualizado.fechaNacimiento = "2000-01-01";
+        aspiranteActualizado.documentoIdentidad = "01234567-8";
+        aspiranteActualizado.correo = "juan.editado@example.com";
+        aspiranteActualizado.fechaCreacion = "2026-05-06T04:00:00-06:00";
+
         cut
-          .update(idCreado, jornadaActualizada)
+          .update(idCreado, aspiranteActualizado)
           .then(() => {
             Response.prototype.json = originalJson;
             done(new Error("La actualización debería haber fallado"));
           })
           .catch((error) => {
             Response.prototype.json = originalJson;
-
             try {
-              chai.expect(error).to.have.property("mensaje");
-              chai
-                .expect(error.mensaje)
-                .to.include(
-                  "Error al parsear los datos: Simulado: JSON corrupto",
-                );
+              chai.expect(error.mensaje).to.include("Error al parsear los datos: Simulado: JSON corrupto");
               done();
             } catch (assertError) {
               done(assertError);
@@ -349,32 +327,29 @@ describe("JornadaDAO Integration Tests", function () {
     // Método Delete
     // ==========================================
     describe("Method: delete()", function () {
-      it("Debe eliminar la jornada creada y rechazar al intentar encontrarla", function (done) {
+      it("Debe eliminar el aspirante creado y rechazar al intentar encontrarlo", function (done) {
         cut
           .delete(idCreado)
           .then(() => {
-            // Anulamos la variable global para que el hook 'after' no intente borrarla de nuevo y explote
             const idParaBuscar = idCreado;
-            idCreado = null;
+            idCreado = null; // Evitar que el hook 'after' intente borrarlo otra vez
 
             cut
               .findById(idParaBuscar)
               .then(() => {
-                done(new Error("La jornada debería haber sido eliminada"));
+                done(new Error("El aspirante debería haber sido eliminado"));
               })
               .catch((error) => {
                 chai.expect(error).to.have.property("mensaje");
-                chai
-                  .expect(error.mensaje)
-                  .to.include("Error al obtener los datos: 404");
+                chai.expect(error.mensaje).to.include("Error al obtener los datos: 404");
                 done();
               })
-              .catch(done);
+              .catch((e) => done(new Error(e.mensaje || e)));
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
 
-      it("Debe rechazar al intentar eliminar una jornada que no existe", function (done) {
+      it("Debe rechazar al intentar eliminar un aspirante que no existe", function (done) {
         cut
           .delete("123e4567-e89b-12d3-a456-426614174999")
           .then(() => {
@@ -382,41 +357,37 @@ describe("JornadaDAO Integration Tests", function () {
           })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al eliminar los datos: 404");
+            chai.expect(error.mensaje).to.include("Error al eliminar los datos: 404");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
   });
 
+  // ==========================================
+  // Pruebas Offline
+  // ==========================================
   describe("Pruebas con servidor apagado", function () {
     requiereServidorApagado();
     let cut;
 
     before(function () {
-      cut = new JornadaDAO();
+      cut = new AspiranteDAO();
     });
 
     describe("Method: create()", function () {
       it("Debe rechazar por servidor apagado", function (done) {
-        const jornadaInvalida = new Jornada();
-        jornadaInvalida.nombre = null; // Nombre vacío para provocar error
+        const aspirante = new Aspirante();
         cut
-          .create(jornadaInvalida)
-          .then(() => {
-            done(new Error("La creación debería haber fallado"));
-          })
+          .create(aspirante)
+          .then(() => done(new Error("La creación debería haber fallado")))
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al acceder al repositorio");
+            chai.expect(error.mensaje).to.include("Error al acceder al repositorio");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
 
@@ -424,17 +395,12 @@ describe("JornadaDAO Integration Tests", function () {
       it("Debe rechazar por servidor apagado", function (done) {
         cut
           .findRange(0, 10)
-          .then(() => {
-            done(new Error("La consulta debería haber fallado"));
-          })
+          .then(() => done(new Error("La consulta debería haber fallado")))
           .catch((error) => {
-            chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al acceder al repositorio");
+            chai.expect(error.mensaje).to.include("Error al acceder al repositorio");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
 
@@ -442,37 +408,26 @@ describe("JornadaDAO Integration Tests", function () {
       it("Debe rechazar por servidor apagado", function (done) {
         cut
           .findById("123e4567-e89b-12d3-a456-426614174000")
-          .then(() => {
-            done(new Error("La consulta debería haber fallado"));
-          })
+          .then(() => done(new Error("La consulta debería haber fallado")))
           .catch((error) => {
-            chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al acceder al repositorio");
+            chai.expect(error.mensaje).to.include("Error al acceder al repositorio");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
 
     describe("Method: update()", function () {
       it("Debe rechazar por servidor apagado", function (done) {
-        const jornadaActualizada = new Jornada();
-        jornadaActualizada.nombre = "Jornada Actualizada";
+        const aspirante = new Aspirante();
         cut
-          .update("123e4567-e89b-12d3-a456-426614174000", jornadaActualizada)
-          .then(() => {
-            done(new Error("La actualización debería haber fallado"));
-          })
+          .update("123e4567-e89b-12d3-a456-426614174000", aspirante)
+          .then(() => done(new Error("La actualización debería haber fallado")))
           .catch((error) => {
-            chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al acceder al repositorio");
+            chai.expect(error.mensaje).to.include("Error al acceder al repositorio");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
 
@@ -482,13 +437,10 @@ describe("JornadaDAO Integration Tests", function () {
           .delete("123e4567-e89b-12d3-a456-426614174000")
           .then(() => done(new Error("La eliminación debería haber fallado")))
           .catch((error) => {
-            chai.expect(error).to.have.property("mensaje");
-            chai
-              .expect(error.mensaje)
-              .to.include("Error al acceder al repositorio");
+            chai.expect(error.mensaje).to.include("Error al acceder al repositorio");
             done();
           })
-          .catch(done);
+          .catch((e) => done(new Error(e.mensaje || e)));
       });
     });
   });

@@ -77,40 +77,38 @@ class DefaultDAO {
   }
 
   _create(objeto) {
-    let salida = new Promise((resolve, reject) => {
-      fetch(`${this.URL}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(objeto),
-      })
-        .then((r) => {
-          if (r.status === 201) {
-            let resp = new DefaultResponse();
-            resp.datos = {
-              location: r.headers.get("Location"),
-              id: r.headers.get("Location") ? r.headers.get("Location").split("/").pop() : null
-            };
-            resolve(resp);
-          } else {
-            let error = new DefaultError();
-            error.mensaje = r.headers.get("Process-Error") || 
-                            r.headers.get("Wrong-Parameter") || 
-                            `Error del servidor: ${r.status}`;
-            error.error = r;
-            reject(error);
-          }
-        })
-        .catch((e) => {
+  let salida = new Promise((resolve, reject) => {
+    fetch(`${this.URL}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(objeto),
+    })
+      .then((r) => {
+        if (r.status === 201) {
+          let resp = new DefaultResponse();
+          resp.datos = {
+            location: r.headers.get("Location"),
+            id: r.headers.get("Location") ? r.headers.get("Location").split("/").pop() : null
+          };
+          resolve(resp);
+        } else {
           let error = new DefaultError();
-          error.mensaje = `Error al acceder al repositorio`;
-          error.error = e;
+          error.mensaje = `Error al crear los datos: ${r.status}`;
+          error.error = r;
           reject(error);
-        });
-    });
-    return salida;
-  }
+        }
+      })
+      .catch((e) => {
+        let error = new DefaultError();
+        error.mensaje = `Error al acceder al repositorio`;
+        error.error = e;
+        reject(error);
+      });
+  });
+  return salida;
+}
 
   _update(id, entidad) {
       let salida = new Promise((resolve, reject) => {

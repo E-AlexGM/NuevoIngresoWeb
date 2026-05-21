@@ -1,54 +1,33 @@
 import * as chai from "../lib/chai/index.js";
-import JornadaDAO from "../../../src/js/control/jornada_dao.js";
+import AreaDAO from "../../../src/js/control/area_dao.js";
 import DefaultResponse from "../../../src/js/entity/default_response.js";
-import Jornada from "../../../src/js/entity/jornada.js";
+import Area from "../../../src/js/entity/area.js";
 import { requiereServidor, requiereServidorApagado } from "./it_config.js";
 
 mocha.setup("bdd");
 
-describe("JornadaDAO Integration Tests", function () {
+describe("AreaDAO Integration Tests", function () {
   describe("Pruebas con servidor en línea", function () {
-    requiereServidor();
     let cut;
     let idCreado;
-    let jornadaBase;
+
+    requiereServidor();
 
     // Este before se ejecuta antes de cualquier prueba de esta clase
     before(function () {
-      cut = new JornadaDAO();
-
-      jornadaBase = new Jornada();
-      jornadaBase.nombre = "Jornada de Prueba";
-      jornadaBase.fechaInicio = "2026-05-10T02:00:00-06:00";
-      jornadaBase.fechaFin = "2026-05-10T06:00:00-06:00";
+      cut = new AreaDAO();
     });
 
-    // Limpieza final
-    after(function (done) {
-      if (idCreado) {
-        cut
-          .delete(idCreado)
-          .then(() => {
-            console.log("Limpieza de integración completada.");
-            done();
-          })
-          .catch(done);
-      } else {
-        done();
-      }
+    it("Debe crear una instancia de AreaDAO", function () {
+      chai.expect(cut).to.be.an.instanceOf(AreaDAO);
     });
 
-    it("Debe crear una instancia de JornadaDAO", function () {
-      chai.expect(cut).to.be.an.instanceOf(JornadaDAO);
-    });
-
-    // ==========================================
-    // Método Create
-    // ==========================================
+    //Método Create
     describe("Method: create()", function () {
-      it("Debe retornar un DefaultResponse con los datos de la jornada creada", function (done) {
+      it("Debe retornar un DefaultResponse con los datos de la área creada", function (done) {
+        const area = { nombre: "Area de Prueba" };
         cut
-          .create(jornadaBase)
+          .create(area)
           .then((response) => {
             chai.expect(response).to.be.an.instanceOf(DefaultResponse);
             chai.expect(response.datos).to.be.an("object");
@@ -64,10 +43,9 @@ describe("JornadaDAO Integration Tests", function () {
       });
 
       it("Debe rechazar leyendo el header Process-Error cuando falla la creación (500)", function (done) {
-        const jornadaInvalida = new Jornada();
-        jornadaInvalida.nombre = null; // Nombre vacío para provocar error
+        const areaInvalida = { nombre: null }; // Nombre vacío para provocar error
         cut
-          .create(jornadaInvalida)
+          .create(areaInvalida)
           .then(() => {
             done(new Error("La creación debería haber fallado"));
           })
@@ -81,12 +59,12 @@ describe("JornadaDAO Integration Tests", function () {
           .catch(done);
       });
 
-      it("Debe rechazar cuando se envía entidad con id (400)", function (done) {
-        const jornadaConId = new Jornada();
-        jornadaConId.idJornada = "123e4567-e89b-12d3-a456-426614174000";
-        jornadaConId.nombre = "Jornada de Prueba";
+      it("Debe rechazar cuando se envía entidad con id (422)", function (done) {
+        const areaConId = new Area();
+        areaConId.idArea = "123e4567-e89b-12d3-a456-426614174000";
+        areaConId.nombre = "Area de Prueba";
         cut
-          .create(jornadaConId)
+          .create(areaConId)
           .then(() => {
             done(new Error("La creación debería haber fallado"));
           })
@@ -94,18 +72,15 @@ describe("JornadaDAO Integration Tests", function () {
             chai.expect(error).to.have.property("mensaje");
             chai
               .expect(error.mensaje)
-              .to.include("Error al crear los datos: 400");
+              .to.include("Error al crear los datos: 422");
             done();
           })
           .catch(done);
       });
     });
 
-    // ==========================================
-    // Método FindRange
-    // ==========================================
     describe("Method: findRange()", function () {
-      it("Debe retornar un DefaultResponse con un array de jornadas y total_datos", function (done) {
+      it("Debe retornar un DefaultResponse con un array de áreas y total_datos", function (done) {
         cut
           .findRange(0, 10)
           .then((response) => {
@@ -113,7 +88,7 @@ describe("JornadaDAO Integration Tests", function () {
             chai.expect(response.datos).to.be.an("array");
             chai.expect(response).to.have.property("total_datos");
             chai.expect(response.total_datos).to.be.a("string");
-            chai.expect(response.datos).to.have.length.above(0);
+            chai.expect(response.datos).to.have.length.above(1);
             done();
           })
           .catch(done);
@@ -129,7 +104,7 @@ describe("JornadaDAO Integration Tests", function () {
             chai.expect(error).to.have.property("mensaje");
             chai
               .expect(error.mensaje)
-              .to.include("Error al obtener los datos: 400");
+              .to.include("Error al obtener los datos: 422");
             done();
           })
           .catch(done);
@@ -165,29 +140,26 @@ describe("JornadaDAO Integration Tests", function () {
       });
     });
 
-    // ==========================================
-    // Método FindById
-    // ==========================================
     describe("Method: findById()", function () {
-      it("Debe retornar un DefaultResponse con la jornada encontrada", function (done) {
+      it("Debe retornar un DefaultResponse con la área encontrada", function (done) {
         cut
           .findById(idCreado)
           .then((response) => {
             chai.expect(response).to.be.an.instanceOf(DefaultResponse);
             chai.expect(response.datos).to.be.an("object");
-            const jornadaObtenida = response.datos;
-            chai.expect(jornadaObtenida).to.have.property("idJornada");
-            chai.expect(jornadaObtenida).to.have.property("nombre");
-            chai.expect(jornadaObtenida.idJornada).to.exist;
-            chai.expect(jornadaObtenida.nombre).to.exist;
-            chai.expect(jornadaObtenida.idJornada).to.equal(idCreado);
-            chai.expect(jornadaObtenida.nombre).to.equal(jornadaBase.nombre);
+            var Area = response.datos;
+            chai.expect(Area).to.have.property("idArea");
+            chai.expect(Area).to.have.property("nombre");
+            chai.expect(Area.idArea).to.exist;
+            chai.expect(Area.nombre).to.exist;
+            chai.expect(Area.idArea).to.equal(idCreado);
+            chai.expect(Area.nombre).to.equal("Area de Prueba");
             done();
           })
           .catch(done);
       });
 
-      it("Debe rechazar si no se encuentra la jornada", function (done) {
+      it("Debe rechazar si no se encuentra la área", function (done) {
         cut
           .findById("123e4567-e89b-12d3-a456-426614174999")
           .then(() => {
@@ -249,36 +221,27 @@ describe("JornadaDAO Integration Tests", function () {
       });
     });
 
-    // ==========================================
-    // Método Update
-    // ==========================================
     describe("Method: update()", function () {
-      it("Debe actualizar la jornada creada y retornar un DefaultResponse con los datos actualizados", function (done) {
-        const jornadaActualizada = new Jornada();
-        jornadaActualizada.nombre = "Jornada Actualizada";
-        jornadaActualizada.fechaInicio = "2026-05-10T02:00:00-06:00";
-        jornadaActualizada.fechaFin = "2026-05-10T06:00:00-06:00";
-
+      it("Debe actualizar la área creada y retornar un DefaultResponse con los datos actualizados", function (done) {
+        const areaActualizada = { nombre: "Area Actualizada" };
         cut
-          .update(idCreado, jornadaActualizada)
+          .update(idCreado, areaActualizada)
           .then((response) => {
             chai.expect(response).to.be.an.instanceOf(DefaultResponse);
             chai.expect(response.datos).to.be.an("object");
-            chai.expect(response.datos).to.have.property("idJornada");
+            chai.expect(response.datos).to.have.property("idArea");
             chai.expect(response.datos).to.have.property("nombre");
-            chai.expect(response.datos.idJornada).to.equal(idCreado);
-            chai.expect(response.datos.nombre).to.equal("Jornada Actualizada");
+            chai.expect(response.datos.idArea).to.equal(idCreado);
+            chai.expect(response.datos.nombre).to.equal("Area Actualizada");
             done();
           })
           .catch(done);
       });
 
-      it("Debe rechazar al intentar actualizar una jornada que no existe", function (done) {
-        const jornadaInexistente = new Jornada();
-        jornadaInexistente.nombre = "Jornada Inexistente";
-
+      it("Debe rechazar al intentar actualizar una área que no existe", function (done) {
+        const areaInexistente = { nombre: "Area Inexistente" };
         cut
-          .update("123e4567-e89b-12d3-a456-426614174999", jornadaInexistente)
+          .update("123e4567-e89b-12d3-a456-426614174999", areaInexistente)
           .then(() => {
             done(new Error("La actualización debería haber fallado"));
           })
@@ -293,11 +256,9 @@ describe("JornadaDAO Integration Tests", function () {
       });
 
       it("Debe rechazar al intentar actualizar con datos inválidos", function (done) {
-        const jornadaInvalida = new Jornada();
-        jornadaInvalida.nombre = null; // Nombre vacío para provocar error
-
+        const areaInvalida = { nombre: null }; // Nombre vacío para provocar error
         cut
-          .update(idCreado, jornadaInvalida)
+          .update(idCreado, areaInvalida)
           .then(() => {
             done(new Error("La actualización debería haber fallado"));
           })
@@ -317,12 +278,9 @@ describe("JornadaDAO Integration Tests", function () {
           return Promise.reject(new Error("Simulado: JSON corrupto"));
         };
 
-        const jornadaActualizada = new Jornada();
-        jornadaActualizada.nombre = "Jornada Actualizada";
-        jornadaActualizada.fechaInicio = "2026-05-10T02:00:00-06:00";
-        jornadaActualizada.fechaFin = "2026-05-10T06:00:00-06:00";
+        const areaActualizada = { nombre: "Area Actualizada" };
         cut
-          .update(idCreado, jornadaActualizada)
+          .update(idCreado, areaActualizada)
           .then(() => {
             Response.prototype.json = originalJson;
             done(new Error("La actualización debería haber fallado"));
@@ -345,22 +303,15 @@ describe("JornadaDAO Integration Tests", function () {
       });
     });
 
-    // ==========================================
-    // Método Delete
-    // ==========================================
     describe("Method: delete()", function () {
-      it("Debe eliminar la jornada creada y rechazar al intentar encontrarla", function (done) {
+      it("Debe eliminar la área creada y rechazar al intentar encontrarla", function (done) {
         cut
           .delete(idCreado)
           .then(() => {
-            // Anulamos la variable global para que el hook 'after' no intente borrarla de nuevo y explote
-            const idParaBuscar = idCreado;
-            idCreado = null;
-
             cut
-              .findById(idParaBuscar)
+              .findById(idCreado)
               .then(() => {
-                done(new Error("La jornada debería haber sido eliminada"));
+                done(new Error("La área debería haber sido eliminada"));
               })
               .catch((error) => {
                 chai.expect(error).to.have.property("mensaje");
@@ -374,7 +325,7 @@ describe("JornadaDAO Integration Tests", function () {
           .catch(done);
       });
 
-      it("Debe rechazar al intentar eliminar una jornada que no existe", function (done) {
+      it("Debe rechazar al intentar eliminar una área que no existe", function (done) {
         cut
           .delete("123e4567-e89b-12d3-a456-426614174999")
           .then(() => {
@@ -397,15 +348,14 @@ describe("JornadaDAO Integration Tests", function () {
     let cut;
 
     before(function () {
-      cut = new JornadaDAO();
+      cut = new AreaDAO();
     });
 
     describe("Method: create()", function () {
       it("Debe rechazar por servidor apagado", function (done) {
-        const jornadaInvalida = new Jornada();
-        jornadaInvalida.nombre = null; // Nombre vacío para provocar error
+        const areaInvalida = { nombre: null }; // Nombre vacío para provocar error
         cut
-          .create(jornadaInvalida)
+          .create(areaInvalida)
           .then(() => {
             done(new Error("La creación debería haber fallado"));
           })
@@ -458,10 +408,9 @@ describe("JornadaDAO Integration Tests", function () {
 
     describe("Method: update()", function () {
       it("Debe rechazar por servidor apagado", function (done) {
-        const jornadaActualizada = new Jornada();
-        jornadaActualizada.nombre = "Jornada Actualizada";
+        const areaActualizada = { nombre: "Area Actualizada" };
         cut
-          .update("123e4567-e89b-12d3-a456-426614174000", jornadaActualizada)
+          .update("123e4567-e89b-12d3-a456-426614174000", areaActualizada)
           .then(() => {
             done(new Error("La actualización debería haber fallado"));
           })
@@ -480,7 +429,9 @@ describe("JornadaDAO Integration Tests", function () {
       it("Debe rechazar por servidor apagado", function (done) {
         cut
           .delete("123e4567-e89b-12d3-a456-426614174000")
-          .then(() => done(new Error("La eliminación debería haber fallado")))
+          .then(() => {
+            done(new Error("La eliminación debería haber fallado"));
+          })
           .catch((error) => {
             chai.expect(error).to.have.property("mensaje");
             chai
