@@ -1,9 +1,9 @@
 import DefaultDAO from "./default_dao.js";
 
 class PruebaClaveAreaDAO extends DefaultDAO {
-    constructor(idPruebaClave, idArea) {
+    constructor(idPruebaClave) {
         super();
-        this.URL += `prueba_clave/${idPruebaClave}/area/${idArea}/`;
+        this.URL += `prueba_clave/${idPruebaClave}/area/`;
     }
 
     /**
