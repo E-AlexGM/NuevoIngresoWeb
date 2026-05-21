@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="manifest" href="./manifest.json">
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><input type="button" value="Instalar PWA" id="InstalarPWA"></li>
+        </ul>
+    </nav>
+    
+    <script>
+        let instalacion=null;
+        window.addEventListener("beforeinstallprompt", (event)=>{
+            event.preventDefault();
+            instalacion=event;
+            document.getElementById("InstalarPWA").style.display="block";
+        });
+        window.addEventListener("appinstalled", (event)=>{
+            instalacion=null;
+            document.getElementById("InstalarPWA").style.display="none";
+        });
+        document.getElementById("InstalarPWA").addEventListener("click", (event)=>{
+            if(instalacion){
+                instalacion.prompt();
+                instalacion.userChoice.then((choice)=>{
+                    if(choice.outcome==="accepted"){
+                        console.log("El usuario aceptó la instalación");
+                    }else{
+                        console.log("El usuario rechazó la instalación");
+                    }
+                    instalacion=null;
+                    document.getElementById("InstalarPWA").style.display="none";
+                });
+            }
+        });
+    </script>
+</body>
+</html>

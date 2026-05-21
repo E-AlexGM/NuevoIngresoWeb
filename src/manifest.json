@@ -1,0 +1,34 @@
+{
+    "name": "Ingreso Universitario UES",
+    "short_name": "Ingreso UES",
+    "start_url": "/pwa.html",
+    "display": "standalone",
+    "background_color": "#f4f4f4",
+    "theme_color": "#e74c3c",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/img/iconos/pwa_192_192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/iconos/pwa_512_512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/img/iconos/pwa.png",
+            "sizes": "1408x768",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/img/iconos/pwa_slim.png",
+            "sizes": "800x436",
+            "type": "image/png"
+        }
+    ]
+}
