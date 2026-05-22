@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import DistractorDAO from "../../../../src/js/control/distractor_dao.js";
+import Distractor from "../../../../src/js/entity/distractor.js";
 
 mocha.setup("tdd");
 
@@ -47,7 +48,8 @@ suite("DistractorDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const distractor = { valor: "A" };
+            const distractor = new Distractor();
+            distractor.valor = "A";
 
             const resultado = cut.create(distractor);
 
@@ -78,7 +80,8 @@ suite("DistractorDAO Unit Test", function () {
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
 
             const idParam = "123";
-            const distractor = { valor: "A" };
+            const distractor = new Distractor();
+            distractor.valor = "A";
 
             const resultado = cut.update(idParam, distractor);
 

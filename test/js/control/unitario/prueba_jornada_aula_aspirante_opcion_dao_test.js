@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import PruebaJornadaAulaAspiranteOpcionDAO from "../../../../src/js/control/prueba_jornada_aula_aspirante_opcion_dao.js";
+import PruebaJornadaAulaAspiranteOpcion from "../../../../src/js/entity/prueba_jornada_aula_aspirante_opcion.js";
 
 mocha.setup("tdd");
 
@@ -40,7 +41,8 @@ suite("PruebaJornadaAulaAspiranteOpcionDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const pruebaJornadaAulaAspiranteOpcion = { estado: "PENDIENTE" };
+            const pruebaJornadaAulaAspiranteOpcion = new PruebaJornadaAulaAspiranteOpcion();
+            pruebaJornadaAulaAspiranteOpcion.estado = "PENDIENTE";
 
             const resultado = cut.create(pruebaJornadaAulaAspiranteOpcion);
 
@@ -71,7 +73,8 @@ suite("PruebaJornadaAulaAspiranteOpcionDAO Unit Test", function () {
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
 
             const idParam = "123";
-            const pruebaJornadaAulaAspiranteOpcion = { estado: "RESUELTO" };
+            const pruebaJornadaAulaAspiranteOpcion = new PruebaJornadaAulaAspiranteOpcion();
+            pruebaJornadaAulaAspiranteOpcion.estado = "RESUELTO";
 
             const resultado = cut.update(idParam, pruebaJornadaAulaAspiranteOpcion);
 

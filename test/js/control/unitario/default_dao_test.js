@@ -4,6 +4,13 @@ import DefaultResponse from "../../../../src/js/entity/default_response.js";
 import DefaultError from "../../../../src/js/entity/default_error.js";
 import DefaultDAO from "../../../../src/js/control/default_dao.js";
 
+class MockEntity {
+  constructor() {
+    this.id = null;
+    this.nombre = "";
+  }
+}
+
 mocha.setup("tdd");
 suite("DefaultDAO Unit Test", function () {
   var cut;
@@ -115,7 +122,9 @@ suite("DefaultDAO Unit Test", function () {
 
   suite("_findById()", function () {
     test("Debe retornar DefaultResponse con los datos de la entidad (200)", function (done) {
-      const mockEntity = { id: 1, nombre: "Item 1" };
+        const mockEntity = new MockEntity();
+        mockEntity.id = 1;
+        mockEntity.nombre = "Item 1";
       const mockResponse = new Response(JSON.stringify(mockEntity), {
         status: 200,
       });
@@ -304,7 +313,9 @@ suite("DefaultDAO Unit Test", function () {
 
   suite("_update()", function () {
     test("Debe retornar DefaultResponse actualizado (200)", function (done) {
-      const mockEntity = { id: 1, nombre: "Item Modificado" };
+        const mockEntity = new MockEntity();
+        mockEntity.id = 1;
+        mockEntity.nombre = "Item Modificado";
       const mockResponse = new Response(JSON.stringify(mockEntity), {
         status: 200,
       });

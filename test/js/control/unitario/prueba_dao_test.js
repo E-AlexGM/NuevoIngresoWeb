@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import PruebaDAO from "../../../../src/js/control/prueba_dao.js";
+import Prueba from "../../../../src/js/entity/prueba.js";
 
 mocha.setup("tdd");
 
@@ -40,7 +41,8 @@ suite("PruebaDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const prueba = { nombre: "Examen" };
+            const prueba = new Prueba();
+            prueba.nombre = "Examen";
 
             const resultado = cut.create(prueba);
 
@@ -71,7 +73,8 @@ suite("PruebaDAO Unit Test", function () {
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
 
             const idParam = "123";
-            const prueba = { nombre: "Examen" };
+            const prueba = new Prueba();
+            prueba.nombre = "Examen";
 
             const resultado = cut.update(idParam, prueba);
 

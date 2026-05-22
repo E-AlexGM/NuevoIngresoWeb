@@ -21,7 +21,8 @@ describe("AreaDAO Integration Tests - Online", function () {
   //Método Create
   describe("Method: create()", function () {
     it("Debe retornar un DefaultResponse con los datos de la área creada", function (done) {
-      const area = { nombre: "Area de Prueba" };
+      const area = new Area();
+      area.nombre = "Area de Prueba";
       cut
         .create(area)
         .then((response) => {
@@ -39,7 +40,8 @@ describe("AreaDAO Integration Tests - Online", function () {
     });
 
     it("Debe rechazar leyendo el header Process-Error cuando falla la creación (500)", function (done) {
-      const areaInvalida = { nombre: null }; // Nombre vacío para provocar error
+      const areaInvalida = new Area();
+      areaInvalida.nombre = null; // Nombre vacío para provocar error
       cut
         .create(areaInvalida)
         .then(() => {
@@ -219,7 +221,8 @@ describe("AreaDAO Integration Tests - Online", function () {
 
   describe("Method: update()", function () {
     it("Debe actualizar la área creada y retornar un DefaultResponse con los datos actualizados", function (done) {
-      const areaActualizada = { nombre: "Area Actualizada" };
+      const areaActualizada = new Area();
+      areaActualizada.nombre = "Area Actualizada";
       cut
         .update(idCreado, areaActualizada)
         .then((response) => {
@@ -235,7 +238,8 @@ describe("AreaDAO Integration Tests - Online", function () {
     });
 
     it("Debe rechazar al intentar actualizar una área que no existe", function (done) {
-      const areaInexistente = { nombre: "Area Inexistente" };
+      const areaInexistente = new Area();
+      areaInexistente.nombre = "Area Inexistente";
       cut
         .update("123e4567-e89b-12d3-a456-426614174999", areaInexistente)
         .then(() => {
@@ -252,7 +256,8 @@ describe("AreaDAO Integration Tests - Online", function () {
     });
 
     it("Debe rechazar al intentar actualizar con datos inválidos", function (done) {
-      const areaInvalida = { nombre: null }; // Nombre vacío para provocar error
+      const areaInvalida = new Area();
+      areaInvalida.nombre = null; // Nombre vacío para provocar error
       cut
         .update(idCreado, areaInvalida)
         .then(() => {

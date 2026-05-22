@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import AspiranteOpcionDAO from "../../../../src/js/control/aspirante_opcion_dao.js";
+import AspiranteOpcion from "../../../../src/js/entity/aspirante_opcion.js";
 
 mocha.setup("tdd");
 
@@ -47,7 +48,8 @@ suite("AspiranteOpcionDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const aspiranteOpcion = { idOpcion: 1 };
+            const aspiranteOpcion = new AspiranteOpcion();
+            aspiranteOpcion.idOpcion = 1;
 
             const resultado = cut.create(aspiranteOpcion);
 
@@ -78,7 +80,8 @@ suite("AspiranteOpcionDAO Unit Test", function () {
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
 
             const idParam = "99";
-            const aspiranteOpcion = { idOpcion: 2 };
+            const aspiranteOpcion = new AspiranteOpcion();
+            aspiranteOpcion.idOpcion = 2;
 
             const resultado = cut.update(idParam, aspiranteOpcion);
 

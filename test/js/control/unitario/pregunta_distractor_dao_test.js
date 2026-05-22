@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import PreguntaDistractorDAO from "../../../../src/js/control/pregunta_distractor_dao.js";
+import PreguntaDistractor from "../../../../src/js/entity/pregunta_distractor.js";
 
 mocha.setup("tdd");
 
@@ -40,7 +41,9 @@ suite("PreguntaDistractorDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const preguntaDistractor = { idDistractor: 1, correcto: false };
+            const preguntaDistractor = new PreguntaDistractor();
+            preguntaDistractor.idDistractor = 1;
+            preguntaDistractor.correcto = false;
 
             const resultado = cut.create(preguntaDistractor);
 

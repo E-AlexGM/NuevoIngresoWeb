@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import AreaDAO from "../../../../src/js/control/area_dao.js";
+import Area from "../../../../src/js/entity/area.js";
 
 mocha.setup("tdd");
 suite("AreaDAO Unit Test", function () {
@@ -48,7 +49,8 @@ suite("AreaDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const area = { nombre: "Area 1" };
+            const area = new Area();
+            area.nombre = "Area 1";
 
             const resultado = cut.create(area);
 
@@ -79,7 +81,8 @@ suite("AreaDAO Unit Test", function () {
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
 
             const idParam = "123";
-            const area = { nombre: "Area 2" };
+            const area = new Area();
+            area.nombre = "Area 2";
 
             const resultado = cut.update(idParam, area);
 

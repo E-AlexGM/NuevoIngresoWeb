@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import PreguntaAreaDAO from "../../../../src/js/control/pregunta_area_dao.js";
+import PreguntaArea from "../../../../src/js/entity/pregunta_area.js";
 
 mocha.setup("tdd");
 
@@ -40,7 +41,8 @@ suite("PreguntaAreaDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const preguntaArea = { idArea: 1 };
+            const preguntaArea = new PreguntaArea();
+            preguntaArea.idArea = 1;
 
             const resultado = cut.create(preguntaArea);
 

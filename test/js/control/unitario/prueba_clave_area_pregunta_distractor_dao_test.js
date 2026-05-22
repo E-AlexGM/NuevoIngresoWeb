@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import PruebaClaveAreaPreguntaDistractorDAO from "../../../../src/js/control/prueba_clave_area_pregunta_distractor_dao.js";
+import PruebaClaveAreaPreguntaDistractor from "../../../../src/js/entity/prueba_clave_area_pregunta_distractor.js";
 
 mocha.setup("tdd");
 
@@ -40,7 +41,8 @@ suite("PruebaClaveAreaPreguntaDistractorDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const pruebaClaveAreaPreguntaDistractor = { correcto: true };
+            const pruebaClaveAreaPreguntaDistractor = new PruebaClaveAreaPreguntaDistractor();
+            pruebaClaveAreaPreguntaDistractor.correcto = true;
 
             const resultado = cut.create(pruebaClaveAreaPreguntaDistractor);
 

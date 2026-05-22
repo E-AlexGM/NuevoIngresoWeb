@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import TipoPruebaDAO from "../../../../src/js/control/tipo_prueba_dao.js";
+import TipoPrueba from "../../../../src/js/entity/tipo_prueba.js";
 
 mocha.setup("tdd");
 
@@ -36,7 +37,8 @@ suite("TipoPruebaDAO Unit Test", function () {
         test("Debe delegar la llamada a _create con el objeto recibido", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
-            const tipoPrueba = { nombre: "Psicotécnica" };
+            const tipoPrueba = new TipoPrueba();
+            tipoPrueba.nombre = "Psicotécnica";
             const resultado = cut.create(tipoPrueba);
             chai.assert.equal(resultado, mockPromise);
             chai.assert.isTrue(stubFetch.calledOnce);
@@ -61,7 +63,8 @@ suite("TipoPruebaDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_update");
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
             const idParam = "123";
-            const tipoPrueba = { nombre: "Psicotécnica Actualizada" };
+            const tipoPrueba = new TipoPrueba();
+            tipoPrueba.nombre = "Psicotécnica Actualizada";
             const resultado = cut.update(idParam, tipoPrueba);
             chai.assert.equal(resultado, mockPromise);
             chai.assert.isTrue(stubFetch.calledOnce);

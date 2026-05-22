@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import DistractorAreaDAO from "../../../../src/js/control/distractor_area_dao.js";
+import DistractorArea from "../../../../src/js/entity/distractor_area.js";
 
 mocha.setup("tdd");
 
@@ -37,7 +38,8 @@ suite("DistractorAreaDAO Unit Test", function () {
 
     suite("create()", function () {
         test("Debe delegar la llamada a _create con el objeto recibido", function () {
-            const distractorArea = { idArea: 1 };
+            const distractorArea = new DistractorArea();
+            distractorArea.idArea = 1;
 
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);

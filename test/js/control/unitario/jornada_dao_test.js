@@ -1,6 +1,7 @@
 import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import JornadaDAO from "../../../../src/js/control/jornada_dao.js";
+import Jornada from "../../../../src/js/entity/jornada.js";
 
 mocha.setup("tdd");
 
@@ -40,7 +41,8 @@ suite("JornadaDAO Unit Test", function () {
             const mockPromise = Promise.resolve("datos_create");
             stubFetch = sinon.stub(cut, "_create").returns(mockPromise);
 
-            const jornada = { nombre: "Jornada Matutina" };
+            const jornada = new Jornada();
+            jornada.nombre = "Jornada Matutina";
 
             const resultado = cut.create(jornada);
 
@@ -71,7 +73,8 @@ suite("JornadaDAO Unit Test", function () {
             stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
 
             const idParam = "123";
-            const jornada = { nombre: "Jornada Vespertina" };
+            const jornada = new Jornada();
+            jornada.nombre = "Jornada Vespertina";
 
             const resultado = cut.update(idParam, jornada);
 
