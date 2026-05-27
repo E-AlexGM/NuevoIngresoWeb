@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>All Unit Tests</title>
+  <link rel="stylesheet" href="../../js/lib/mocha/mocha.css" />
+  <style>body{font-family:Arial,Helvetica,sans-serif;margin:16px}</style>
+</head>
+<body>
+  <h1>All Unit Tests (Unitario)</h1>
+  <div id="mocha"></div>
+
+  <script src="../../js/lib/mocha/mocha.js"></script>
+  <script>
+    // Configure mocha
+    mocha.setup('tdd');
+
+    // Intercept early mocha.run() calls from individual test modules
+    const _originalMochaRun = mocha.run.bind(mocha);
+    // temporarily noop to avoid running before all modules are loaded
+    mocha.run = function() {
+      // noop until we explicitly call run after imports
+      console.log('mocha.run() intercepted — waiting for all modules to load');
+    };
+  </script>
+
+  <script type="module">
+    // Import all unit test modules. Paths are relative to this HTML file.
+    // Awaiting imports ensures all test suites are registered before running mocha.
+    const tests = [
+      '../../js/control/unitario/area_dao_test.js',
+      '../../js/control/unitario/aspirante_dao_test.js',
+      '../../js/control/unitario/aspirante_opcion_dao_test.js',
+      '../../js/control/unitario/default_dao_test.js',
+      '../../js/control/unitario/distractor_area_dao_test.js',
+      '../../js/control/unitario/distractor_dao_test.js',
+      '../../js/control/unitario/jornada_aula_dao_test.js',
+      '../../js/control/unitario/jornada_dao_test.js',
+      '../../js/control/unitario/pregunta_area_dao_test.js',
+      '../../js/control/unitario/pregunta_dao_test.js',
+      '../../js/control/unitario/pregunta_distractor_dao_test.js',
+      '../../js/control/unitario/prueba_clave_area_dao_test.js',
+      '../../js/control/unitario/prueba_clave_area_pregunta_dao_test.js',
+      '../../js/control/unitario/prueba_clave_area_pregunta_distractor_dao_test.js',
+      '../../js/control/unitario/prueba_clave_dao_test.js',
+      '../../js/control/unitario/prueba_dao_test.js',
+      '../../js/control/unitario/prueba_jornada_aula_aspirante_opcion_dao_test.js',
+      '../../js/control/unitario/prueba_jornada_aula_aspirante_opcion_examen_dao_test.js',
+      '../../js/control/unitario/prueba_jornada_dao_test.js',
+      '../../js/control/unitario/tipo_prueba_dao_test.js'
+    ];
+
+    async function importAll() {
+      for (const t of tests) {
+        try {
+          await import(t);
+        } catch (e) {
+          console.error('Error importing', t, e);
+        }
+      }
+
+      // restore and run mocha once after all test modules are loaded
+      mocha.run = _originalMochaRun;
+      mocha.run();
+    }
+
+    importAll();
+  </script>
+</body>
+</html>

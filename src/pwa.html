@@ -1,20 +1,49 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="manifest" href="./manifest.json">
-</head>
-<body>
-
-    <nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuevo Ingreso</title>
+    <!-- <link rel="manifest" href="./manifest.json"> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="description"
+      content="Página para procesos de ingreso a la Universidad de El Salvador en el año 2026"
+    />
+    <meta
+      name="keywords"
+      content="Universidad de El Salvador, Ingreso, Procesos, Registro, Aspirante, Carreras, Facultad, Inscripción"
+    />
+    <meta name="author" content="Ever Granadino" />
+    <link rel="stylesheet" href="./estilos/principal.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Carreras Universidad de El Salvador</h1>
+        <h2>Facultad Multidisciplinaria de Occidente</h2>
+      </header>
+      <nav>
         <ul>
-            <li><input type="button" value="Instalar PWA" id="InstalarPWA"></li>
+            <li><a href="#requisitos">Información</a></li>
+            <li><a href="#procedimientos">Procedimientos de Inscripción</a></li>
+            <li><a href="#contactos">Contactos</a></li>
+            <li><input type="button" value="Instalar PWA" id="InstalarPWA" /></li>
         </ul>
-    </nav>
-    
-    <script>
+      </nav>
+
+      
+      <!--  <div class="container">
+        <card-component nombre="Ingeniería en Sistemas" imagen="./img/carreras/I30515.jpeg" url="https://www.ues.edu.sv/carreras/ingenieria-en-sistemas/"></card-component>
+        <card-component nombre="Ingeniería Industrial" imagen="./img/carreras/I30501.jpeg" url="https://www.ues.edu.sv/carreras/ingenieria-industrial/"></card-component>
+      </div> -->
+
+      <registro-aspirante></registro-aspirante>
+
+
+      <script type="module" src="./js/boundary/registro_aspirante.js"></script>
+
+      <!--<script>
         let instalacion=null;
         window.addEventListener("beforeinstallprompt", (event)=>{
             event.preventDefault();
@@ -39,6 +68,7 @@
                 });
             }
         });
-    </script>
-</body>
+    </script>  -->
+    </main>
+  </body>
 </html>
