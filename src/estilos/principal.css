@@ -1,0 +1,84 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    background-color: #f4f6f8; 
+}
+
+main {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 2rem;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    main {
+        margin: 12px auto;
+        padding: 0.75rem;
+    }
+
+    main header {
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    nav ul {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
+
+/* --- Encabezado --- */
+main header {
+    text-align: right;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eaeaea;
+}
+
+main header h1 {
+    color: #F6AE2D; /* Tono amarillo/naranja */
+    font-size: 2rem;
+    margin-bottom: 0.2rem;
+}
+
+main header h2 {
+    color: #e74c3c; /* Tono rojo */
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* --- Menú de Navegación --- */
+nav {
+    margin-top: 1.5rem;
+}
+
+nav ul {
+    list-style: none; /* Adiós a los puntos */
+    display: flex;
+    justify-content: flex-end; /* Alinea el menú a la derecha */
+    gap: 25px; /* Espacio perfecto entre opciones */
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* Transición súper suave */
+}
+
+nav ul li a:hover {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1); /* Fondo sutil al pasar el mouse */
+}
