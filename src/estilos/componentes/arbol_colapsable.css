@@ -1,0 +1,212 @@
+:host {
+    display: block;
+    margin-top: 15px;
+}
+
+.arbol-contenedor {
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+}
+
+.arbol-titulo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 20px 0;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+}
+
+.arbol-titulo span {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.arbol-titulo strong {
+    font-size: 1.2rem;
+    color: #1e293b;
+}
+
+.arbol-vacio {
+    padding: 20px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    color: #64748b;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.arbol-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nodo-hijos {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-left: 24px; 
+    margin-left: 11px;  
+}
+
+.nodo-hijos::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -8px;
+    bottom: 20px; 
+    width: 2px;
+    background-color: #cbd5e0;
+}
+
+.nodo {
+    position: relative;
+    border: none;
+    background: transparent;
+}
+
+.nodo-hijos .nodo::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 20px; 
+    width: 24px;
+    height: 2px;
+    background-color: #cbd5e0;
+}
+
+.nodo summary {
+    list-style: none;
+    outline: none;
+    cursor: pointer;
+}
+.nodo summary::-webkit-details-marker {
+    display: none;
+}
+
+.nodo-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.nodo-fila:hover {
+    background-color: #f8fafc;
+}
+
+.nodo-identificador {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.nodo-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    color: #ffffff;
+    font-weight: bold;
+    flex-shrink: 0;
+    transition: transform 0.2s ease; /* Transición suave para la flecha */
+}
+
+.nodo-icono.nivel-0 { background: linear-gradient(135deg, #1e293b, #0f172a); }
+.nodo-icono.nivel-1 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.nodo-icono.nivel-2 { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.nodo-icono.nivel-3 { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+/* Rotación automática de la flecha interna cuando el menú padre está abierto */
+.nodo details[open] > summary .nodo-icono {
+    transform: rotate(90deg);
+}
+
+.nodo-texto {
+    min-width: 0;
+    flex: 1;
+}
+
+.nodo-nombre {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    word-break: break-word;
+}
+
+.nodo-descripcion {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.nodo-metas {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; 
+}
+
+.badge-preguntas {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .arbol-contenedor {
+        padding: 16px;
+    }
+
+    .nodo-fila {
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .nodo-metas {
+        width: 100%;
+        justify-content: flex-end; 
+    }
+
+    .badge-preguntas {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+    
+    .nodo-hijos {
+        padding-left: 16px;
+        margin-left: 10px;
+    }
+    
+    .nodo-hijos .nodo::before {
+        left: -16px;
+        width: 16px;
+    }
+}
