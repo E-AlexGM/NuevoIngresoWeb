@@ -2,6 +2,8 @@ import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import AspiranteDAO from "../../../../src/js/control/aspirante_dao.js";
 import Aspirante from "../../../../src/js/entity/aspirante.js";
+import DefaultResponse from "../../../../src/js/entity/default_response.js";
+import DefaultError from "../../../../src/js/entity/default_error.js";
 
 mocha.setup("tdd");
 
@@ -105,6 +107,87 @@ suite("AspiranteDAO Unit Test", function () {
             chai.assert.equal(resultado, mockPromise);
             chai.assert.isTrue(stubFetch.calledOnce);
             chai.assert.isTrue(stubFetch.calledWithExactly(idParam));
+        });
+    });
+
+    suite("findByEmail()", function () {
+        test("Debe retornar un DefaultResponse con el aspirante encontrado", function (done) {
+            const mockAspirante = { idAspirante: "123", correo: "ana.paz@example.com" };
+            const mockResponse = {
+                status: 200,
+                json() {
+                    return Promise.resolve(mockAspirante);
+                },
+            };
+            stubFetch = sinon.stub(window, "fetch").resolves(mockResponse);
+
+            const correoParam = "ana.paz@example.com";
+
+            cut
+                .findByEmail(correoParam)
+                .then((response) => {
+                    chai.assert.instanceOf(response, DefaultResponse);
+                    chai.assert.deepEqual(response.datos, mockAspirante);
+                    chai.assert.isTrue(
+                        stubFetch.calledWithMatch(
+                            sinon.match(/buscar\?correo=ana\.paz@example\.com$/),
+                            { method: "GET" },
+                        ),
+                    );
+                    done();
+                })
+                .catch(done);
+        });
+
+        test("Debe rechazar con DefaultError cuando el estatus no es 200", function (done) {
+            const mockResponse = { status: 404 };
+            stubFetch = sinon.stub(window, "fetch").resolves(mockResponse);
+
+            cut
+                .findByEmail("no.existe@example.com")
+                .then(() => done(new Error("Se esperaba rechazo")))
+                .catch((error) => {
+                    chai.assert.instanceOf(error, DefaultError);
+                    chai.assert.include(error.mensaje, "Error al obtener los datos: 404");
+                    done();
+                });
+        });
+
+        test("Debe rechazar cuando falla el parseo JSON", function (done) {
+            const mockResponse = {
+                status: 200,
+                json() {
+                    return Promise.reject(new Error("Simulado: JSON corrupto"));
+                },
+            };
+            stubFetch = sinon.stub(window, "fetch").resolves(mockResponse);
+
+            cut
+                .findByEmail("ana.paz@example.com")
+                .then(() => done(new Error("Se esperaba rechazo")))
+                .catch((error) => {
+                    chai.assert.instanceOf(error, DefaultError);
+                    chai.assert.include(
+                        error.mensaje,
+                        "Error al parsear los datos: Simulado: JSON corrupto",
+                    );
+                    done();
+                });
+        });
+
+        test("Debe rechazar cuando el fetch falla", function (done) {
+            const networkError = new Error("Network Error");
+            stubFetch = sinon.stub(window, "fetch").rejects(networkError);
+
+            cut
+                .findByEmail("ana.paz@example.com")
+                .then(() => done(new Error("Se esperaba rechazo")))
+                .catch((error) => {
+                    chai.assert.instanceOf(error, DefaultError);
+                    chai.assert.equal(error.mensaje, "Error al acceder al repositorio");
+                    chai.assert.equal(error.error, networkError);
+                    done();
+                });
         });
     });
 });

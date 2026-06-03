@@ -244,6 +244,88 @@ describe("AspiranteDAO Integration Tests - Online", function () {
   });
 
   // ==========================================
+  // Método FindByEmail
+  // ==========================================
+  describe("Method: findByEmail()", function () {
+    
+    it("Debe retornar un DefaultResponse con el aspirante encontrado por su correo (200)", function (done) {
+      cut
+        .findByEmail(aspiranteBase.correo)
+        .then((response) => {
+          chai.expect(response).to.be.an.instanceOf(DefaultResponse);
+          chai.expect(response.datos).to.be.an("object");
+
+          const aspiranteObtenido = response.datos;
+          
+          chai.expect(aspiranteObtenido).to.have.property("idAspirante");
+          chai.expect(aspiranteObtenido).to.have.property("nombres");
+          chai.expect(aspiranteObtenido).to.have.property("correo");
+
+          chai.expect(aspiranteObtenido.nombres).to.equal(aspiranteBase.nombres);
+          chai.expect(aspiranteObtenido.correo).to.equal(aspiranteBase.correo);
+          
+          done();
+        })
+        .catch((e) => done(new Error(`Falló la petición: ${e.mensaje || e}`)));
+    });
+
+    it("Debe rechazar si el correo buscado no existe en la base de datos (404)", function (done) {
+      cut
+        .findByEmail("correo.fantasma.inexistente@example.com")
+        .then(() => {
+          done(new Error("La consulta debería haber fallado al no encontrar el recurso"));
+        })
+        .catch((error) => {
+          chai.expect(error).to.have.property("mensaje");
+          chai.expect(error.mensaje).to.match(/Error al obtener los datos: (404)/);
+          done();
+        })
+        .catch((e) => done(new Error(e.mensaje || e)));
+    });
+
+    it("Debe rechazar si se envía un parámetro de correo vacío o inválido (400)", function (done) {
+      cut
+        .findByEmail("")
+        .then(() => {
+          done(new Error("La consulta debería haber fallado por un parámetro inválido"));
+        })
+        .catch((error) => {
+          chai.expect(error).to.have.property("mensaje");
+          chai.expect(error.mensaje).to.match(/Error al obtener los datos: (400)/);
+          done();
+        })
+        .catch((e) => done(new Error(e.mensaje || e)));
+    });
+
+    it("Debe rechazar capturando el error al parsear un JSON corrupto desde la respuesta", function (done) {
+      const originalFetch = globalThis.fetch;
+      
+      globalThis.fetch = () => Promise.resolve({
+        status: 200,
+        json: () => Promise.reject(new Error("Simulado: JSON corrupto en findByEmail"))
+      });
+
+      cut
+        .findByEmail(aspiranteBase.correo)
+        .then(() => {
+          globalThis.fetch = originalFetch; // Siempre restauramos
+          done(new Error("La consulta debería haber fallado en el catch del parseo JSON"));
+        })
+        .catch((error) => {
+          globalThis.fetch = originalFetch; // Siempre restauramos
+          try {
+            chai.expect(error).to.have.property("mensaje");
+            chai.expect(error.mensaje).to.include("Error al parsear los datos: Simulado: JSON corrupto en findByEmail");
+            done();
+          } catch (assertError) {
+            done(assertError);
+          }
+        });
+    });
+    
+  });
+
+  // ==========================================
   // Método Update
   // ==========================================
   describe("Method: update()", function () {

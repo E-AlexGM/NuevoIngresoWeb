@@ -89,6 +89,21 @@ describe("AspiranteDAO Integration Tests - Offline", function () {
         .catch((e) => done(new Error(e.mensaje || e)));
     });
   });
+
+  describe("Method: findByEmail()", function () {
+    it("Debe rechazar por servidor apagado", function (done) {
+      cut
+        .findByEmail("correo@ejemplo.com")
+        .then(() => done(new Error("La consulta debería haber fallado")))
+        .catch((error) => {
+          chai
+            .expect(error.mensaje)
+            .to.include("Error al acceder al repositorio");
+          done();
+        })
+        .catch((e) => done(new Error(e.mensaje || e)));
+    });
+  });
 });
 
 mocha.run();

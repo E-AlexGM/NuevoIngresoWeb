@@ -1,4 +1,6 @@
 import DefaultDAO from "./default_dao.js";
+import DefaultResponse from "../entity/default_response.js";
+import DefaultError from "../entity/default_error.js";
 
 class AspiranteDAO extends DefaultDAO {
     constructor() {
@@ -52,6 +54,41 @@ class AspiranteDAO extends DefaultDAO {
     delete(id) {
         return this._delete(id);
     }
+
+    findByEmail(correo) {
+        let salida = new Promise((resolve, reject) => {
+            fetch(`${this.URL}buscar?correo=${correo}`, { method: "GET" })
+                .then((r) => {
+                    if (r.status === 200) {
+                        r.json()
+                        .then((j) => {
+                            let resp = new DefaultResponse();
+                            resp.datos = j;
+                            resolve(resp);
+                        })
+                        .catch((e) => {
+                            let error = new DefaultError();
+                            error.mensaje = `Error al parsear los datos: ${e.message}`;
+                            error.error = e;
+                            reject(error);
+                        });
+                    } else {
+                        let error = new DefaultError();
+                        error.mensaje = `Error al obtener los datos: ${r.status}`;
+                        error.error = r;
+                        reject(error);
+                    }
+            })
+            .catch((e) => {
+                let error = new DefaultError();
+                error.mensaje = `Error al acceder al repositorio`;
+                error.error = e;
+                reject(error);
+            });
+        });
+        return salida;
+    }
+
 }
 
 export default AspiranteDAO;
