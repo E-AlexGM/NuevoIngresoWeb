@@ -64,17 +64,19 @@ class VistaRegistroAspirante extends HTMLElement {
         }));
     }
 
-    validarDuplicados(documentoIdentidad) {
-        return this.aspiranteDAO.findRange(0, 50)
+    validarDuplicados(correo) {
+        return this.aspiranteDAO.findByEmail(correo.trim())
             .then(respuesta => {
-                const aspirantesDB = Array.isArray(respuesta?.datos) ? respuesta.datos : [];
-
-                return aspirantesDB.some(user =>
-                    String(user.documentoIdentidad).trim() === documentoIdentidad
-                );
+                this.notificar('Ya existe un aspirante registrado con este correo.', 'error');
+                return true;
             })
             .catch(error => {
-                throw new Error('No se pudo verificar si el aspirante ya existe en el sistema.');
+                if (error.mensaje && error.mensaje.includes('404')) {
+                    return false;
+                } 
+
+                throw new Error('Error al verificar duplicados: ' + (error.mensaje || 'Error desconocido'));
+                this.notificar('Error al verificar duplicados: ' + (error.mensaje || 'Error desconocido'), 'error');
             });
     }
 
@@ -170,7 +172,7 @@ class VistaRegistroAspirante extends HTMLElement {
         e.preventDefault();
         this.errorMensaje = '';
 
-        const documentoIdentidad = this.datos.documentoIdentidad.trim();
+        const correo = this.datos.correo;
         const carrerasElegidas = this.carrerasSeleccionadas.filter(id => id !== null);
 
         if (carrerasElegidas.length === 0) {
@@ -186,34 +188,33 @@ class VistaRegistroAspirante extends HTMLElement {
             return;
         }
 
-        this.validarDuplicados(documentoIdentidad)
-            .then(usuarioExiste => {
-                if (usuarioExiste) {
-                    this.errorMensaje = 'DUPLICADO'; 
+        this.validarDuplicados(correo)
+            .then(esDuplicado => {
+                if (esDuplicado) {
+                    this.errorMensaje = 'DUPLICADO';
                     this._dibujar();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return null;
+                    return Promise.reject(new Error('DUPLICADO')); 
                 }
-
-                return this.crearAspirante()
-                    .then(idGenerado => {
-                        return this.crearOpcionesAspirante(idGenerado)
-                            .catch(error => {
-                                return this.revertirCreacionAspirante(idGenerado)
-                                    .then(() => {
-                                        throw error;
-                                    });
+                return this.crearAspirante();
+            })
+            .then(idGenerado => {
+                return this.crearOpcionesAspirante(idGenerado)
+                    .catch(error => {
+                        return this.revertirCreacionAspirante(idGenerado)
+                            .then(() => {
+                                throw error;
                             });
-                    })
-                    .then(() => {
-                        this.resetearFormulario();
-                        this.notificar('¡Registro exitoso! Bienvenido.', 'exito');
                     });
             })
+            .then(() => {
+                this.resetearFormulario();
+                this.notificar('¡Registro exitoso! Bienvenido.', 'exito');
+            })
             .catch(error => {
-                this.errorMensaje = error.message || 'Ocurrió un error inesperado al registrar los datos.';
-                this._dibujar();
-                this.notificar(this.errorMensaje, 'error');
+                if (error.message !== 'DUPLICADO') {
+                    this.notificar(error.message || 'Error al procesar el registro', 'error');
+                }
             });
     }
 
@@ -229,7 +230,7 @@ class VistaRegistroAspirante extends HTMLElement {
 
                 ${this.errorMensaje === 'DUPLICADO' ? html`
                     <div class="alerta-error" id="msgErrorDuplicado">
-                        <strong>¡Atención!</strong> Ya existe un aspirante registrado con este DUI.<br><br>
+                        <strong>¡Atención!</strong> Ya existe un aspirante registrado con este correo.<br><br>
                         ¿Olvidaste tus credenciales? <a href="#">RECUPERA TU CUENTA AQUÍ</a>
                     </div>
                 ` : this.errorMensaje ? html`
@@ -242,7 +243,7 @@ class VistaRegistroAspirante extends HTMLElement {
                         <div class="tarjeta-seccion">
                             <div class="tarjeta-header">DATOS PERSONALES</div>
                             <div class="tarjeta-body grid-inputs">
-                                <input type="text" id="txtDocumentoIdentidad" name="documentoIdentidad" .value=${this.datos.documentoIdentidad} class="form-input col-completa" placeholder="Documento de Identidad (DUI)" required @input=${(e) => this.manejarInput(e)}>
+                                <input type="text" id="txtDocumentoIdentidad" name="documentoIdentidad" .value=${this.datos.documentoIdentidad} class="form-input col-completa" placeholder="Documento de Identidad (DUI)" @input=${(e) => this.manejarInput(e)}>
                                 
                                 <input type="text" id="txtNombres" name="nombres" .value=${this.datos.nombres} class="form-input" placeholder="Nombres Completos" required @input=${(e) => this.manejarInput(e)}>
                                 <input type="text" id="txtApellidos" name="apellidos" .value=${this.datos.apellidos} class="form-input" placeholder="Apellidos Completos" required @input=${(e) => this.manejarInput(e)}>
