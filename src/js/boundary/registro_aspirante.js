@@ -223,11 +223,7 @@ class VistaRegistroAspirante extends HTMLElement {
             <link rel="stylesheet" href="./estilos/componentes/registro_aspirante.css">
 
             <div class="registro-wrapper" id="contenedorRegistro">
-                <div class="header-titulos">
-                    <h1>REGISTRO DE ASPIRANTES</h1>
-                    <p>Selecciona hasta tres carreras para tu futuro</p>
-                </div>
-
+              
                 ${this.errorMensaje === 'DUPLICADO' ? html`
                     <div class="alerta-error" id="msgErrorDuplicado">
                         <strong>¡Atención!</strong> Ya existe un aspirante registrado con este correo.<br><br>

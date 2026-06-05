@@ -44,17 +44,20 @@ class FrmResultados extends HTMLElement {
 
     _templateExamResults(){
           return html`
+            <link rel="stylesheet" href="./estilos/layout/admin.css">
             <h2>Resultados</h2>
             <p>Estos son los resultados de la búsqueda.</p>
 
-            ${this.cardExamenDtoList ? this.cardExamenDtoList.map(item => html`               
-                 <ui-card>
-                    <div slot="content">
-                        <p>Nombre de la prueba: ${item.nombrePrueba || '-'}</p>
-                        <p>Fecha de realización: ${item.fechaRealizacion || '-'}</p>
-                        <p>Resultado: ${item.resultado || '-'}</p>
-                    </div>
-                </ui-card>
+            ${this.cardExamenDtoList ? this.cardExamenDtoList.map(item => html` 
+                <div class="grid-tarjetas">              
+                    <ui-card>
+                        <div slot="content">
+                            <p>Nombre de la prueba: ${item.nombrePrueba || '-'}</p>
+                            <p>Fecha de realización: ${item.fechaRealizacion || '-'}</p>
+                            <p>Resultado: ${item.resultado || '-'}</p>
+                        </div>
+                    </ui-card>
+                </div>
             `) : html`
                 <p>No se encontraron resultados correspondientes</p>
             `}

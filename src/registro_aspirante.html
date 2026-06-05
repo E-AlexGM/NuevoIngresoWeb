@@ -5,14 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aspirante Opcion</title>
     <link rel="stylesheet" href="./estilos/principal.css">
+    <link rel="stylesheet" href="./estilos/layout/admin.css">
+
 </head>
 <body>
 
-    <main>
-        <registro-aspirante></registro-aspirante>
-    </main>
-
-
+    <script type="module" src="./js/boundary/componentes/ui_nav.js"></script>
+  
+    <div class="layout-grid">
+     
+        <header>
+                <ui-nav></ui-nav>
+        </header>
+        <hgroup>
+                <h1>REGISTRO DE ASPIRANTES</h1>
+                <p>Selecciona hasta tres carreras para tu futuro</p>
+                
+        </hgroup>
+        <main>
+            <registro-aspirante></registro-aspirante>
+        </main>
+        <footer></footer>
+    </div>
 
     <notificacion-toast></notificacion-toast>
     <script type="module" src="./js/boundary/registro_aspirante.js"></script>
