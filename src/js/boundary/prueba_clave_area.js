@@ -19,10 +19,9 @@ class VistaPruebaClaveArea extends HTMLElement {
     }
 
     connectedCallback() {
-        const parametrosURL = new URLSearchParams(window.location.search);
-        this.idPrueba = parametrosURL.get('id');
         this.cargarVista();
     }
+
 
     notificar(mensaje, tipo) {
         window.dispatchEvent(new CustomEvent('lanzar-notificacion', {

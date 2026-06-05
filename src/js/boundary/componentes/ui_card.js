@@ -22,10 +22,11 @@ class UiCard extends HTMLElement {
 
     _template() {
         return html`
-            <link rel="stylesheet" href="./estilos/componentes/ui_card.css">  
+            <link rel="stylesheet" href="../../estilos/componentes/ui_card.css">  
             <div class="card">
                 <slot class="" name="title"></slot>
                 <slot name="content"></slot>
+                <slot name="action"></slot>
             </div>
 
         `;

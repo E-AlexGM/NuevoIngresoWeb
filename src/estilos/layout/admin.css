@@ -1,20 +1,25 @@
 :root {
-    --color-fondo: #fafafa;
+    /* Paleta institucional adaptada del primer diseño */
+    --color-fondo: #fcfcfc;
     --color-primario: #ffffff;
-    --color-secundario: #1a1a1a;
-    --color-acento: #2563eb;
-    --color-borde: #e5e7eb;
+    --color-secundario: #1f2937; /* Gris oscuro para títulos */
+    --color-acento: #922b21; /* Tu guinda institucional */
+    --color-borde: #e7e5e4;
+    --color-borde-suave: #f1d9d5;
     --color-texto: #1f2937;
-    --color-texto-light: #6b7280;
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    --color-texto-light: #5b6472;
+    --font-sans: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 * {
     font-family: var(--font-sans);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 /* Contenedor */
-.layout-grid{
+.layout-grid {
     display: grid;
     min-height: 100vh;
     grid-template-columns: 1fr minmax(0, 960px) 1fr;
@@ -28,15 +33,36 @@
     background-color: var(--color-fondo);
 }
 
-
-main{
-    grid-area: main;
+header {
+    grid-area: header;
     background-color: var(--color-primario);
-    text-align: left;
-    padding: 48px 32px;
-    margin: 24px 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--color-borde);
+    padding: 0 32px;
+    display: flex;
+    justify-content: center; /* Centra la navegación, puedes cambiar a flex-start */
+    gap: 32px;
+}
+
+header a, nav a {
+    display: block;
+    padding: 16px 0;
+    color: var(--color-texto-light);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.2s ease, box-shadow 0.2s ease;
+    /* Usamos inset box-shadow para el indicador activo sin alterar el layout */
+    box-shadow: inset 0 0 0 0 transparent; 
+}
+
+header a:hover, nav a:hover {
+    color: var(--color-acento);
+}
+
+header a.activo, nav a.activo {
+    color: var(--color-acento);
+    /* Línea inferior elegante que crece hacia adentro */
+    box-shadow: inset 0 -3px 0 0 var(--color-acento); 
 }
 
 hgroup {
@@ -44,55 +70,39 @@ hgroup {
     background-color: var(--color-primario);
     text-align: left;
     padding: 40px 32px;
-    border-bottom: 1px solid var(--color-borde);
-    color: var(--color-texto);
+    margin-top: 24px;
+    border: 1px solid var(--color-borde-suave);
+    border-radius: 1.5rem;
+    box-shadow: 0 0.625rem 1.5rem rgba(15, 23, 42, 0.05);
 }
 
 hgroup h2 {
     margin: 0 0 8px 0;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 2vw, 2.2rem);
     font-weight: 700;
     color: var(--color-secundario);
 }
 
 hgroup h3 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-weight: 400;
     color: var(--color-texto-light);
+    line-height: 1.55;
 }
 
-header{
-    grid-area: header;
-    background-color: var(--color-primario);
-    border-bottom: 1px solid var(--color-borde);
-    padding: 0 32px;
+main {
+    grid-area: main;
+    background: linear-gradient(180deg, #fffaf8 0%, #ffffff 34%);
+    text-align: left;
+    padding: 48px 32px;
+    margin: 24px 0 48px;
+    border-radius: 1.5rem;
+    border: 1px solid var(--color-borde);
+    box-shadow: 0 1.25rem 3.125rem rgba(15, 23, 42, 0.08);
 }
 
-header {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 32px;
-}
-
-header a {
-    display: block;
-    padding: 16px 0;
-    color: var(--color-texto-light);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
-    border-bottom: 2px solid transparent;
-}
-
-nav a:hover {
-    color: var(--color-acento);
-    border-bottom-color: var(--color-acento);
-}
-
-footer{
+footer {
     grid-area: footer;
     background-color: var(--color-secundario);
     color: #ffffff;
@@ -101,4 +111,55 @@ footer{
     font-size: 0.875rem;
 }
 
-/* Distribucion para distintos tipos de pantallas*/
+/*Grid para tarjetas*/
+
+
+/* Distribución para distintos tipos de pantallas */
+
+@media (max-width: 1024px) {
+    /* En tablets, reduce un poco el ancho central para dar margen */
+    .layout-grid {
+        grid-template-columns: 1fr minmax(0, 92%) 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        gap: 20px;
+        padding: 0 20px;
+    }
+
+    hgroup, main {
+        padding: 24px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* En móviles, la columna central ocupa casi todo el ancho */
+    .layout-grid {
+        grid-template-columns: 0px 100% 0px; 
+    }
+
+    header {
+        justify-content: space-between;
+        gap: 10px;
+        padding: 0 16px;
+    }
+
+    header a, nav a {
+        font-size: 0.85rem;
+        padding: 12px 0;
+    }
+
+    hgroup {
+        margin: 16px 12px 0;
+        border-radius: 1.125rem;
+        padding: 20px 16px;
+    }
+
+    main {
+        margin: 16px 12px 32px;
+        border-radius: 1.125rem;
+        padding: 24px 16px;
+    }
+}

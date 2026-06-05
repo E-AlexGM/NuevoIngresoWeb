@@ -21,11 +21,12 @@ class UiNav extends HTMLElement {
 
     _template(){
         return html`
-            <div>
+
+            <nav>
                 <a href="/resultados.html">Resultados</a>
                 <a href="/procesos.html">Proceso</a>
                 <a href="/registro_aspirante.html">Registro</a>
-            </div>
+            </nav>
             `;
     }
 }

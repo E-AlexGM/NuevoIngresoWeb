@@ -1,0 +1,73 @@
+.menu-navegacion {
+    display: flex;
+    align-items: center;
+    gap: 2.25rem;
+    padding: 0 0.5rem;
+    height: 3.5rem;
+    border-bottom: 1px solid #e7e5e4; /* Línea divisoria sutil */
+    margin-bottom: 2rem;
+    font-family: Arial, sans-serif;
+}
+
+.enlace-nav {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #5b6472;
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+/* El indicador clásico de la barra de navegación (línea inferior) */
+.enlace-nav::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; /* Se superpone exactamente al borde inferior del menú */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #922b21; /* Tu color guinda institucional */
+    border-radius: 3px 3px 0 0;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+/* Efecto al pasar el cursor */
+.enlace-nav:hover {
+    color: #1f2937;
+}
+
+.enlace-nav:hover::after {
+    transform: scaleX(1); /* Muestra la línea elegantemente */
+}
+
+/* Estado activo (Página actual) */
+.enlace-nav.activo {
+    color: #922b21;
+    font-weight: 700;
+}
+
+.enlace-nav.activo::after {
+    transform: scaleX(1); /* Mantiene la línea fija */
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 35rem) {
+    .menu-navegacion {
+        gap: 1.5rem;
+        justify-content: center; /* Centrado clásico en móviles */
+        height: auto;
+        padding: 0.75rem 0;
+    }
+    
+    .enlace-nav {
+        padding: 0.5rem 0;
+    }
+    
+    .enlace-nav::after {
+        bottom: 0;
+    }
+}

@@ -12,10 +12,10 @@ class PruebaJornadaDAO extends DefaultDAO {
      * @param {number} first primer registro a obtener
      * @param {number} max cantidad maxima de registros a obtener
      * @returns {Promise<DefaultResponse, DefaultError>} una promesa que se resuelve con un DefaultResponse o se rechaza con un DefaultError
-     
+     */
     findRange(first, max) {
         return this._findRange(first, max);
-    }*/ 
+    }
 
     /**
      * Crea una nueva prueba jornada.
@@ -34,6 +34,9 @@ class PruebaJornadaDAO extends DefaultDAO {
     delete(id) {
         return this._delete(id);
     }
+
+
+    
 }
 
 export default PruebaJornadaDAO;
