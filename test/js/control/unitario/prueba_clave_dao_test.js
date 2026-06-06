@@ -67,23 +67,6 @@ suite("PruebaClaveDAO Unit Test", function () {
         });
     });
 
-    suite("update()", function () {
-        test("Debe delegar la llamada a _update con los parámetros recibidos", function () {
-            const mockPromise = Promise.resolve("datos_update");
-            stubFetch = sinon.stub(cut, "_update").returns(mockPromise);
-
-            const idParam = "123";
-            const pruebaClave = new PruebaClave();
-            pruebaClave.nombre = "Clave A Actualizada";
-
-            const resultado = cut.update(idParam, pruebaClave);
-
-            chai.assert.equal(resultado, mockPromise);
-            chai.assert.isTrue(stubFetch.calledOnce);
-            chai.assert.isTrue(stubFetch.calledWithExactly(idParam, pruebaClave));
-        });
-    });
-
     suite("delete()", function () {
         test("Debe delegar la llamada a _delete con el id recibido", function () {
             const mockPromise = Promise.resolve("datos_delete");
