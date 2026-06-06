@@ -37,9 +37,8 @@ class VistaRegistroAspirante extends HTMLElement {
                 }
             })
             .catch(error => {
-                this.errorMensaje = 'No se pudo cargar el catálogo de carreras.';
+                this.errorMensaje = 'Ocurrió un error. Por favor, intentalo más tarde.';
                 this._dibujar();
-                this.notificar(error.mensaje || this.errorMensaje, 'error');
             });
     }
 
