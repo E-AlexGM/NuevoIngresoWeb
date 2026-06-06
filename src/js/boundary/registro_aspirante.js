@@ -6,7 +6,8 @@ import AspiranteOpcion from '../entity/aspirante_opcion.js';
 import AspiranteOpcionDAO from '../control/aspirante_opcion_dao.js';
 
 import './componentes/notificacion_toast.js';
-import SelectorBuscador from './componentes/selector_buscador.js'; 
+import './componentes/datos_componente.js';
+import './componentes/seleccion_carreras.js';
 
 class VistaRegistroAspirante extends HTMLElement {
     constructor() {
@@ -14,13 +15,9 @@ class VistaRegistroAspirante extends HTMLElement {
         this._root = this.attachShadow({ mode: 'open' });
         this.aspiranteDAO = new AspiranteDAO();
         this.carreraDAO = new CarreraDAO();
-        this.datos = {
-            documentoIdentidad: '',
-            nombres: '',
-            apellidos: '',
-            fechaNacimiento: '',
-            correo: ''
-        };
+        
+        // El estado central
+        this.datos = { documentoIdentidad: '', nombres: '', apellidos: '', fechaNacimiento: '', correo: '' };
         this.carrerasSeleccionadas = [null, null, null]; 
         this.errorMensaje = '';
         this.catalogoCarreras = [];
@@ -35,10 +32,7 @@ class VistaRegistroAspirante extends HTMLElement {
         this.carreraDAO.findRange(0, 50)
             .then(respuesta => {
                 if (respuesta && Array.isArray(respuesta.datos)) {
-                    this.catalogoCarreras = respuesta.datos.map(carrera => ({
-                        id: carrera.codigo, 
-                        texto: carrera.nombre
-                    }));
+                    this.catalogoCarreras = respuesta.datos.map(carrera => ({ id: carrera.codigo, texto: carrera.nombre }));
                     this._dibujar();
                 }
             })
@@ -49,65 +43,57 @@ class VistaRegistroAspirante extends HTMLElement {
             });
     }
 
-    manejarInput(e) {
-        const { name, value } = e.target;
-        this.datos[name] = value;
+    // ======= LISTENERS PARA LOS EVENTOS BUBBLED =======
+    actualizarDatosPersonales(e) {
+        const { campo, valor } = e.detail;
+        this.datos[campo] = valor;
     }
 
-    manejarSeleccionCarrera(index, e) {
-        this.carrerasSeleccionadas[index] = e.detail.id;
+    actualizarCarreras(e) {
+        this.carrerasSeleccionadas = e.detail.carreras;
     }
 
     notificar(mensaje, tipo) {
-        window.dispatchEvent(new CustomEvent('lanzar-notificacion', {
-            detail: { mensaje, tipo }
-        }));
+        window.dispatchEvent(new CustomEvent('lanzar-notificacion', { detail: { mensaje, tipo } }));
+    }
+
+    validarMayorDeDiezAnios(fechaNacimiento) {
+        if (!fechaNacimiento) return false;
+        const fechaNac = new Date(fechaNacimiento);
+        const fechaActual = new Date();
+        let edad = fechaActual.getFullYear() - fechaNac.getFullYear();
+        const mesDiferencia = fechaActual.getMonth() - fechaNac.getMonth();
+        if (mesDiferencia < 0 || (mesDiferencia === 0 && fechaActual.getDate() < fechaNac.getDate())) edad--;
+        return edad >= 10;
     }
 
     validarDuplicados(correo) {
         return this.aspiranteDAO.findByEmail(correo.trim())
-            .then(respuesta => {
-                this.notificar('Ya existe un aspirante registrado con este correo.', 'error');
-                return true;
-            })
+            .then(() => true)
             .catch(error => {
-                if (error.mensaje && error.mensaje.includes('404')) {
-                    return false;
-                } 
-
-                throw new Error('Error al verificar duplicados: ' + (error.mensaje || 'Error desconocido'));
-                this.notificar('Error al verificar duplicados: ' + (error.mensaje || 'Error desconocido'), 'error');
+                if (error.mensaje && error.mensaje.includes('404')) return false;
+                throw new Error('Error al verificar duplicados');
             });
     }
 
     validarCarrerasUnicas(carrerasElegidas) {
-        const carrerasNormalizadas = carrerasElegidas.map(carrera => String(carrera).trim());
-        const carrerasUnicas = new Set(carrerasNormalizadas);
-        return carrerasNormalizadas.length === carrerasUnicas.size;
+        const carrerasNormalizadas = carrerasElegidas.map(c => String(c).trim());
+        return carrerasNormalizadas.length === new Set(carrerasNormalizadas).size;
     }
 
     crearAspirante() {
         const nuevoAspirante = new Aspirante();
+        Object.assign(nuevoAspirante, this.datos);
         nuevoAspirante.documentoIdentidad = this.datos.documentoIdentidad.trim();
-        nuevoAspirante.nombres = this.datos.nombres.trim();
-        nuevoAspirante.apellidos = this.datos.apellidos.trim();
-        nuevoAspirante.fechaNacimiento = this.datos.fechaNacimiento;
-        nuevoAspirante.correo = this.datos.correo.trim();
         nuevoAspirante.fechaCreacion = new Date().toISOString();
-        return this.aspiranteDAO.create(nuevoAspirante)
-            .then(aspiranteCreado => {
-                const idAspiranteCreado = aspiranteCreado?.datos?.id || aspiranteCreado?.datos?.location?.split('/').pop();
-                if (!idAspiranteCreado) {
-                    throw new Error('No se pudo obtener el identificador del aspirante creado.');
-                }
-
-                return idAspiranteCreado;
-            });
+        
+        return this.aspiranteDAO.create(nuevoAspirante).then(res => res?.datos?.id || res?.datos?.location?.split('/').pop());
     }
 
     crearOpcionesAspirante(idAspiranteGenerado) {
         const opcionDAO = new AspiranteOpcionDAO(idAspiranteGenerado);
         const carrerasElegidas = this.carrerasSeleccionadas.filter(id => id !== null);
+        
         return carrerasElegidas.reduce((cadena, idCarrera, indice) => {
             return cadena.then(opcionesCreadas => {
                 const nuevaOpcion = new AspiranteOpcion();
@@ -115,77 +101,59 @@ class VistaRegistroAspirante extends HTMLElement {
                 nuevaOpcion.idOpcion = idCarrera;
                 nuevaOpcion.prioridad = indice + 1;
                 nuevaOpcion.fechaCreacion = new Date().toISOString();
-
-                return opcionDAO.create(nuevaOpcion)
-                    .then(respuestaCreacion => {
-                        const idOpcionCreada = respuestaCreacion?.datos?.id || respuestaCreacion?.datos?.location?.split('/').pop();
-                        opcionesCreadas.push(idOpcionCreada);
-                        return opcionesCreadas;
-                    });
+                
+                return opcionDAO.create(nuevaOpcion).then(res => {
+                    opcionesCreadas.push(res?.datos?.id || res?.datos?.location?.split('/').pop());
+                    return opcionesCreadas;
+                });
             });
         }, Promise.resolve([]));
     }
 
     revertirCreacionAspirante(idAspiranteGenerado, opcionesCreadas = []) {
         const opcionDAO = new AspiranteOpcionDAO(idAspiranteGenerado);
-
-        return [...opcionesCreadas].reverse().reduce((cadena, idOpcionCreada) => {
-            return cadena.then(() => {
-                if (!idOpcionCreada) {
-                    return undefined;
-                }
-
-                return opcionDAO.delete(idOpcionCreada)
-                    .catch(error => {
-                        console.error('No se pudo revertir una opción creada:', error);
-                    });
-            });
+        return [...opcionesCreadas].reverse().reduce((cadena, idOpcion) => {
+            return cadena.then(() => idOpcion ? opcionDAO.delete(idOpcion).catch(console.error) : undefined);
         }, Promise.resolve())
-            .then(() => this.aspiranteDAO.delete(idAspiranteGenerado))
-            .catch(error => {
-                console.error('No se pudo revertir el aspirante creado:', error);
-                throw new Error('Ocurrió un error al deshacer el registro y no se pudo limpiar todo el proceso.');
-            });
+        .then(() => this.aspiranteDAO.delete(idAspiranteGenerado))
+        .catch(() => { throw new Error('Ocurrió un error al deshacer el registro.'); });
     }
 
     resetearFormulario() {
         this.datos = { documentoIdentidad: '', nombres: '', apellidos: '', fechaNacimiento: '', correo: '' };
         this.carrerasSeleccionadas = [null, null, null];
         this.errorMensaje = '';
+        
+        // Limpiamos los selectores visuales llamando al método del subcomponente
+        const formCarreras = this._root.querySelector('form-seleccion-carreras');
+        if (formCarreras) formCarreras.limpiar();
+        
         this._dibujar();
-        const form = this._root.querySelector('form');
-        if (form) {
-            form.reset();
-        }
-        this.limpiarSelectoresCarrera();
     }
 
-    limpiarSelectoresCarrera() {
-        this._root.querySelectorAll('selector-buscador').forEach(selector => {
-            if (typeof selector.limpiar === 'function') {
-                selector.limpiar();
-            }
-        });
-    }
-    
     registrar(e) {
         e.preventDefault();
         this.errorMensaje = '';
-
+        const formDatos = this._root.querySelector('form-datos-personales');
+        if (formDatos && !formDatos.validar()) {
+            return;
+        }
         const correo = this.datos.correo;
         const carrerasElegidas = this.carrerasSeleccionadas.filter(id => id !== null);
 
+        if (!this.validarMayorDeDiezAnios(this.datos.fechaNacimiento)) {
+            this.errorMensaje = 'El aspirante debe tener al menos 10 años de edad para registrarse.';
+            this._dibujar(); return;
+        }
+
         if (carrerasElegidas.length === 0) {
             this.errorMensaje = 'Debes seleccionar al menos tu primera opción de carrera.';
-            this._dibujar();
-            return;
+            this._dibujar(); return;
         }
 
         if (!this.validarCarrerasUnicas(carrerasElegidas)) {
             this.errorMensaje = 'Las opciones de carrera no pueden repetirse.';
-            this._dibujar();
-            this.notificar(this.errorMensaje, 'error');
-            return;
+            this._dibujar(); return;
         }
 
         this.validarDuplicados(correo)
@@ -198,23 +166,13 @@ class VistaRegistroAspirante extends HTMLElement {
                 }
                 return this.crearAspirante();
             })
-            .then(idGenerado => {
-                return this.crearOpcionesAspirante(idGenerado)
-                    .catch(error => {
-                        return this.revertirCreacionAspirante(idGenerado)
-                            .then(() => {
-                                throw error;
-                            });
-                    });
-            })
+            .then(idGenerado => this.crearOpcionesAspirante(idGenerado).catch(error => this.revertirCreacionAspirante(idGenerado).then(() => { throw error; })))
             .then(() => {
                 this.resetearFormulario();
                 this.notificar('¡Registro exitoso! Bienvenido.', 'exito');
             })
             .catch(error => {
-                if (error.message !== 'DUPLICADO') {
-                    this.notificar(error.message || 'Error al procesar el registro', 'error');
-                }
+                if (error.message !== 'DUPLICADO') this.notificar(error.message || 'Error al procesar el registro', 'error');
             });
     }
 
@@ -223,78 +181,33 @@ class VistaRegistroAspirante extends HTMLElement {
             <link rel="stylesheet" href="./estilos/componentes/registro_aspirante.css">
 
             <div class="registro-wrapper" id="contenedorRegistro">
-              
+
                 ${this.errorMensaje === 'DUPLICADO' ? html`
-                    <div class="alerta-error" id="msgErrorDuplicado">
+                    <div class="alerta-error">
                         <strong>¡Atención!</strong> Ya existe un aspirante registrado con este correo.<br><br>
                         ¿Olvidaste tus credenciales? <a href="#">RECUPERA TU CUENTA AQUÍ</a>
                     </div>
-                ` : this.errorMensaje ? html`
-                    <div class="alerta-error" id="msgErrorGeneral">${this.errorMensaje}</div>
-                ` : ''}
+                ` : this.errorMensaje ? html`<div class="alerta-error">${this.errorMensaje}</div>` : ''}
 
-                <form @submit=${(e) => this.registrar(e)} class="formulario-grid" id="formRegistroAspirante">
+                <form @submit=${(e) => this.registrar(e)} class="formulario-grid">
                     
                     <div class="columna-izquierda">
-                        <div class="tarjeta-seccion">
-                            <div class="tarjeta-header">DATOS PERSONALES</div>
-                            <div class="tarjeta-body grid-inputs">
-                                <input type="text" id="txtDocumentoIdentidad" name="documentoIdentidad" .value=${this.datos.documentoIdentidad} class="form-input col-completa" placeholder="Documento de Identidad (DUI)" @input=${(e) => this.manejarInput(e)}>
-                                
-                                <input type="text" id="txtNombres" name="nombres" .value=${this.datos.nombres} class="form-input" placeholder="Nombres Completos" required @input=${(e) => this.manejarInput(e)}>
-                                <input type="text" id="txtApellidos" name="apellidos" .value=${this.datos.apellidos} class="form-input" placeholder="Apellidos Completos" required @input=${(e) => this.manejarInput(e)}>
-                                
-                                <input type="date" id="txtFechaNacimiento" name="fechaNacimiento" .value=${this.datos.fechaNacimiento} class="form-input" required @input=${(e) => this.manejarInput(e)}>
-                                
-                                <input type="email" id="txtCorreo" name="correo" .value=${this.datos.correo} class="form-input col-completa" placeholder="Correo Electrónico" required @input=${(e) => this.manejarInput(e)}>
-                            </div>
-                        </div>
+                        <form-datos-personales 
+                            .datos=${this.datos} 
+                            @datos-actualizados=${(e) => this.actualizarDatosPersonales(e)}>
+                        </form-datos-personales>
                     </div>
 
                     <div class="columna-derecha">
-                        <div class="tarjeta-seccion">
-                            <div class="tarjeta-header">SELECCIÓN DE CARRERAS</div>
-                            <div class="tarjeta-body">
-                                
-                                <div class="grupo-carrera">
-                                    <label>Prioridad 1</label>
-                                    <selector-buscador 
-                                        id="selCarrera1"
-                                        placeholder="-- Elige tu primera opción --"
-                                        .datos=${this.catalogoCarreras}
-                                        @seleccion-cambiada=${(e) => this.manejarSeleccionCarrera(0, e)}>
-                                    </selector-buscador>
-                                </div>
-
-                                <div class="grupo-carrera">
-                                    <label>Prioridad 2 (Opcional)</label>
-                                    <selector-buscador 
-                                        id="selCarrera2"
-                                        placeholder="-- Elige tu segunda opción --"
-                                        .datos=${this.catalogoCarreras}
-                                        @seleccion-cambiada=${(e) => this.manejarSeleccionCarrera(1, e)}>
-                                    </selector-buscador>
-                                </div>
-
-                                <div class="grupo-carrera">
-                                    <label>Prioridad 3 (Opcional)</label>
-                                    <selector-buscador 
-                                        id="selCarrera3"
-                                        placeholder="-- Elige tu tercera opción --"
-                                        .datos=${this.catalogoCarreras}
-                                        @seleccion-cambiada=${(e) => this.manejarSeleccionCarrera(2, e)}>
-                                    </selector-buscador>
-                                </div>
-
-                            </div>
-                        </div>
+                        <form-seleccion-carreras 
+                            .catalogo=${this.catalogoCarreras}
+                            @carreras-actualizadas=${(e) => this.actualizarCarreras(e)}>
+                        </form-seleccion-carreras>
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" id="btnRegistrar" class="btn-registrar">REGISTRARME COMO ASPIRANTE</button>
-                        <p class="login-link">
-                            ¿Ya tienes una cuenta? <a href="#">¡Inicia sesión o RECUPERA TU CUENTA AQUÍ!</a>
-                        </p>
+                        <button type="submit" class="btn-registrar">REGISTRARME COMO ASPIRANTE</button>
+                        <p class="login-link">¿Ya tienes una cuenta? <a href="#">¡Inicia sesión o RECUPERA TU CUENTA AQUÍ!</a></p>
                     </div>
 
                 </form>
@@ -302,11 +215,7 @@ class VistaRegistroAspirante extends HTMLElement {
         `;
     }
 
-    _dibujar() {
-        if (this._root !== undefined) {
-            render(this._template(), this._root);
-        }
-    }
+    _dibujar() { if (this._root) render(this._template(), this._root); }
 }
 
 customElements.define('registro-aspirante', VistaRegistroAspirante);

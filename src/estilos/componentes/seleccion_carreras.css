@@ -1,0 +1,49 @@
+.tarjeta-seccion {
+    background: #ffffff;
+    border-radius: 1.25rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 0.625rem 1.5rem rgba(15, 23, 42, 0.05);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    font-family: Arial, sans-serif;
+}
+
+.tarjeta-header {
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    color: #922b21;
+    padding: 1.25rem 1.375rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.tarjeta-body {
+    padding: 1.125rem 1.375rem 1.375rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 1.25rem; 
+}
+
+.grupo-carrera {
+    display: flex;
+    flex-direction: column;
+}
+
+.grupo-carrera label {
+    display: block;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 0.5rem;
+    font-size: 0.88rem;
+}
+
+@media (max-width: 30rem) {
+    .tarjeta-body {
+        padding: 0.875rem;
+    }
+}

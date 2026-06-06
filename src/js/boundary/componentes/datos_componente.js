@@ -1,0 +1,70 @@
+    import { html, render } from '../../lib/lit-html/lit-html.js';
+
+class FormDatosPersonales extends HTMLElement {
+    constructor() {
+        super();
+        this._root = this.attachShadow({ mode: 'open' });
+        this._datos = {
+            documentoIdentidad: '',
+            nombres: '',
+            apellidos: '',
+            fechaNacimiento: '',
+            correo: ''
+        };
+    }
+
+    set datos(valor) {
+        this._datos = valor || this._datos;
+        this._dibujar();
+    }
+
+    manejarInput(e) {
+        const { name, value } = e.target;
+        let evento = new CustomEvent('datos-actualizados', {
+            composed: true,
+            bubbles: true,
+            detail: { campo: name, valor: value }
+        });
+        this.dispatchEvent(evento);
+    }
+
+    validar() {
+        const inputsRequeridos = this._root.querySelectorAll('input[required]');
+        for (let input of inputsRequeridos) {
+            if (!input.checkValidity()) {
+                input.reportValidity(); 
+                return false;
+            }
+        }
+        return true;
+    }
+
+    _template() {
+        const fechaMax = new Date();
+        fechaMax.setFullYear(fechaMax.getFullYear() - 10);
+        const maxString = fechaMax.toISOString().split('T')[0];
+
+        return html`
+            <link rel="stylesheet" href="./estilos/componentes/datos_componente.css">
+
+            <div class="tarjeta-seccion">
+                <div class="tarjeta-header">DATOS PERSONALES</div>
+                <div class="tarjeta-body grid-inputs">
+                    <input type="text" name="documentoIdentidad" .value=${this._datos.documentoIdentidad} class="form-input col-completa" placeholder="Documento de Identidad (DUI)" @input=${(e) => this.manejarInput(e)}>
+                    
+                    <input type="text" name="nombres" .value=${this._datos.nombres} class="form-input" placeholder="Nombres Completos" required @input=${(e) => this.manejarInput(e)}>
+                    <input type="text" name="apellidos" .value=${this._datos.apellidos} class="form-input" placeholder="Apellidos Completos" required @input=${(e) => this.manejarInput(e)}>
+                    
+                    <input type="date" name="fechaNacimiento" max="${maxString}" .value=${this._datos.fechaNacimiento} class="form-input" required @input=${(e) => this.manejarInput(e)}>
+                    
+                    <input type="email" name="correo" .value=${this._datos.correo} class="form-input col-completa" placeholder="Correo Electrónico" required @input=${(e) => this.manejarInput(e)}>
+                </div>
+            </div>
+        `;
+    }
+
+    _dibujar() { render(this._template(), this._root); }
+}
+
+customElements.define('form-datos-personales', FormDatosPersonales);
+export default FormDatosPersonales;
