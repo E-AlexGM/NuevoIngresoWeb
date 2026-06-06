@@ -109,7 +109,7 @@ class FrmProcesos extends HTMLElement{
         <div class="grid-tarjetas">              
             ${pruebasFiltradas.length > 0 ? 
                 pruebasFiltradas.map(prueba => html `
-                    <ui-card @click=${() => this._selectPrueba(prueba.idPrueba)}>
+                    <ui-card data-id="${prueba.idPrueba}" @click=${() => this._selectPrueba(prueba.idPrueba)}>
                         <div slot="content">
                             <p>Nombre de la prueba: ${prueba.nombre || '-'}</p>
                             <p>Duración de la prueba: ${prueba.duracion || '-'}</p>
