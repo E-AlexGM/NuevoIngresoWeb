@@ -204,8 +204,10 @@ class FrmProcesos extends HTMLElement{
         this.pruebaDao.list(true)
             .then(resultados =>{
                 this.pruebasList = resultados.datos.map(pruebaDto => {
+
+                    if(!pruebaDto) return null;
                     return Object.assign(new Prueba(), pruebaDto);
-                });
+                }).filter(prueba => prueba !== null);
                 this._draw();
                 return Promise.all(
                     this.pruebasList.map(prueba => {
@@ -213,16 +215,17 @@ class FrmProcesos extends HTMLElement{
                         this.pruebaJornadaDao.findRange(0, 50)
                             .then(jornadaResultados => {
                                 prueba.jornadas = jornadaResultados.datos.map(jornadaDto => {
+                                    if (!jornadaDto || !jornadaDto.idJornada) return null;
                                     return Object.assign(new Jornada(), jornadaDto);
-                                });
+                                }).filter(jornada => jornada !== null);
                                 this._draw();
                                 return Promise.all(
                                     prueba.jornadas.map(jornada => {
+                                        
                                         this.jornadaAulaDao = new JornadaAulaDAO(jornada.idJornada);
                                         jornada.aulas = this.jornadaAulaDao.findRange(0, 50)
                                             .then(aulaResultados => {
                                                 jornada.aulas = aulaResultados.datos.map(aulaDto => {
-                                                    console.log("mira esto", aulaDto);
                                     
                                                     if(!aulaDto) return null;
 
