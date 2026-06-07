@@ -66,41 +66,6 @@ class FrmProcesos extends HTMLElement{
             const nombre = prueba.nombre ? prueba.nombre.toLowerCase() : '';
             return nombre.includes(termino);
         });
-        /*
-        return html `
-        <link rel="stylesheet" href="./estilos/layout/admin.css">
-        <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
-      
-       ${this.pruebasList ? 
-                this.pruebasList.map(prueba => html `
-                <div class="grid-tarjetas">              
-
-                    <ui-card @click=${() => this._selectPrueba(prueba.idPrueba)}>
-                        <div slot="content">
-                            <p>Nombre de la prueba: ${prueba.nombre || '-'}</p>
-                            <p>Duración de la prueba: ${prueba.duracion || '-'}</p>
-                            <p>Estado de la prueba: ${prueba.activo ? 'Activo' : 'Inactivo'|| '-'}</p>
-                            <p>Tipo de la prueba: ${prueba.idTipoPrueba.valor || '-'}</p>
-                            <hr>
-                            <h4>Jornadas de la prueba   :</h4>
-                            ${prueba.jornadas ? 
-                                (prueba.jornadas.length > 0 ? html `
-                                    <ul>
-                                        ${prueba.jornadas.map(jornada => html`
-                                            
-                                            <li>${jornada.fechaInicio} - ${jornada.fechaFin || 'Sin fecha'}</li>
-                                        `)}
-                                    </ul>
-                                ` : html `<p>No hay jornadas asociadas a esta prueba.</p>`) 
-                            : html `<p><em>Cargando jornadas...</em></p>`}
-                        </div>
-                    </ui-card>
-                </div>
-                `)    
-            : html ``}
-
-        `;
-        */
        return html `
         <link rel="stylesheet" href="./estilos/layout/admin.css">
 
