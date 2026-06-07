@@ -58,12 +58,13 @@ class FrmProcesos extends HTMLElement{
                 <prueba-clave-area .idPrueba="${this.idPruebaSeleccionada}">
                 </prueba-clave-area>
             </div>
+            <button type="button"  class="btn btn-primario" @click=${() => this._prevStep()}>Anterior</button>
 
         `;
     }
 
 
-    _templateProcesos() {
+_templateProcesos() {
         const pruebasFiltradas = this.pruebasList.filter(prueba => {
             if (!this.filtroBusqueda) return true;
             const termino = this.filtroBusqueda.toLowerCase();
@@ -71,48 +72,44 @@ class FrmProcesos extends HTMLElement{
             return nombre.includes(termino);
         });
         
+        const tarjetasOrdenadas = this._getTarjetasOrdenadas(pruebasFiltradas);
+        
         return html `
         <link rel="stylesheet" href="./estilos/layout/admin.css">
         <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
         <link rel="stylesheet" href="./estilos/componentes/prueba_clave_area.css">
 
-            <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
-
+        <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
 
         <div class="grid-tarjetas">              
-            ${pruebasFiltradas.length > 0 ? 
-                pruebasFiltradas.map(prueba => html `
-                    ${prueba.jornadas ? 
-                        (prueba.jornadas.length > 0 ? 
-                            prueba.jornadas.map(jornada => html`
-                                <div class="r">
-                                <ui-card data-id="${prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(prueba.idPrueba)}>
-                                    <div slot="title vista-encabezado">
-                                    
-                                    </div>
+            ${tarjetasOrdenadas.length > 0 ? 
+                tarjetasOrdenadas.map(item => {
+                    if (item.estado === 'ok') {
+                        return html`
+                            <div class="r">
+                                <ui-card data-id="${item.prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
+                                    <div slot="title vista-encabezado"></div>
                                     <div slot="content">
                                         <h3 class="tarjeta-etiqueta">
-                                         ${prueba.nombre}     
+                                            ${item.prueba.nombre}     
                                         </h3>
                                         <p class="tarjeta-subtitulo">                     
-                                            ${prueba.idTipoPrueba && prueba.idTipoPrueba.valor ? prueba.idTipoPrueba.valor : 'Prueba'}
+                                            ${item.prueba.idTipoPrueba && item.prueba.idTipoPrueba.valor ? item.prueba.idTipoPrueba.valor : 'Prueba'}
                                         </p>
-                                    </h3>   
                                         <hr class="tarjeta-separador">
-                                        <div class="tarjeta-seccion tarjeta-fechas" >
-
+                                        <div class="tarjeta-seccion tarjeta-fechas">
                                             <div class="fecha-item">
                                                 <h4 class="tarjeta-subtitulo">Inicio</h4>
-                                                <p class="tarjeta-texto">${this._formatDate(jornada.fechaInicio)}</p>
+                                                <p class="tarjeta-texto">${this._formatDate(item.jornada.fechaInicio)}</p>
                                             </div>
                                             <div class="fecha-item">
                                                 <h4 class="tarjeta-subtitulo">Fin</h4>
-                                                <p class="tarjeta-texto">${this._formatDate(jornada.fechaFin)}</p>
+                                                <p class="tarjeta-texto">${this._formatDate(item.jornada.fechaFin)}</p>
                                             </div>
                                         </div>
                                         <div class="tarjeta-seccion">
-                                        ${jornada.aulas ? 
-                                            (jornada.aulas.length > 0 ? html`
+                                        ${item.jornada.aulas ? 
+                                            (item.jornada.aulas.length > 0 ? html`
                                                 <details class="tarjeta-desplegable">
                                                     <summary class="tarjeta-subtitulo interactivo" @click=${(e) => e.stopPropagation()}>
                                                         <span>Ver sedes disponibles</span>
@@ -120,41 +117,44 @@ class FrmProcesos extends HTMLElement{
                                                     </summary>
                                                     <div class="desplegable-contenido">
                                                         <ul class="tarjeta-lista">
-                                                            ${jornada.aulas.map(aula => html`
+                                                            ${item.jornada.aulas.map(aula => html`
                                                                ${aula.sede ? html `<li>Sede:<b>${aula.sede}</b></li>`: ''}
-
-
                                                             `)}
                                                         </ul>
                                                     </div>
                                                 </details>
                                             ` : html `
-                                                <h4 class="tarjeta-subtitulo"> Sedes</h4>
+                                                <h4 class="tarjeta-subtitulo">Sedes</h4>
                                                 <p class="tarjeta-vacio">Sin sedes asignadas</p>
-                                        `) 
+                                            `) 
                                         : html `
-                                            <h4 class="tarjeta-subtitulo"> Sedes</h4>
+                                            <h4 class="tarjeta-subtitulo">Sedes</h4>
                                             <p class="tarjeta-vacio">Cargando sedes...</p>
                                         `}
-                                                                                            
-                            </ui-card>
-                            <div>
-                                       `)
-                        : html `
-                            <ui-card @click=${() => this._selectPrueba(prueba.idPrueba)}>
-                                <div slot="content">
-                                    <h3>${prueba.nombre || 'Sin nombre'}</h3>
-                                    <p><b>Estado:</b> ${prueba.activo ? 'Activa' : 'Inactiva'}</p>
-                                    <p ><em>Esta prueba aún no tiene jornadas asignadas.</em></p>
-                                </div>
-                                <div slot="action">
-                                    <button>Ver detalles</button>
-                                </div>
-                                </div> </div>
-                            </ui-card>
-                        `)
-                    : html `<em>Cargando jornadas de ${prueba.nombre}...</em></p>`}
-                `)    
+                                        </div>
+                                    </div>
+                                </ui-card>
+                            </div>
+                        `;
+                    } else if (item.estado === 'vacio') {
+                        return html`
+                            <div class="r">
+                                <ui-card @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
+                                    <div slot="content">
+                                        <h3>${item.prueba.nombre || 'Sin nombre'}</h3>
+                                        <p><b>Estado:</b> ${item.prueba.activo ? 'Activa' : 'Inactiva'}</p>
+                                        <p><em>Esta prueba aún no tiene jornadas asignadas.</em></p>
+                                    </div>
+                                    <div slot="action">
+                                        <button>Ver detalles</button>
+                                    </div>
+                                </ui-card>
+                            </div>
+                        `;
+                    } else {
+                        return html`<p><em>Cargando jornadas de ${item.prueba.nombre}...</em></p>`;
+                    }
+                })    
             : html `<p>No se encontraron pruebas.</p>`}
         </div>
         `;
@@ -183,8 +183,7 @@ class FrmProcesos extends HTMLElement{
 
     _handleSearch(e) {
         this.filtroBusqueda = e.detail.term;
-
-        this._draw(); // Forzamos un re-render
+        this._draw(); 
     }
 
     _template(){
@@ -255,6 +254,37 @@ class FrmProcesos extends HTMLElement{
     _selectPrueba(idPrueba){
         this.idPruebaSeleccionada = idPrueba;
         this._nextStep();
+    }
+
+    /**
+     * Aplana las pruebas y sus jornadas para ordenarlas cronológicamente
+     */
+    _getTarjetasOrdenadas(pruebas) {
+        const tarjetas = [];
+
+        pruebas.forEach(prueba => {
+            if (!prueba.jornadas) {
+                tarjetas.push({ prueba, jornada: null, estado: 'cargando' });
+            } else if (prueba.jornadas.length === 0) {
+                tarjetas.push({ prueba, jornada: null, estado: 'vacio' });
+            } else {
+                prueba.jornadas.forEach(jornada => {
+                    tarjetas.push({ prueba, jornada, estado: 'ok' });
+                });
+            }
+        });
+
+        tarjetas.sort((a, b) => {
+            if (a.estado !== 'ok' || !a.jornada.fechaInicio) return 1;
+            if (b.estado !== 'ok' || !b.jornada.fechaInicio) return -1;
+
+            const dateA = new Date(a.jornada.fechaInicio).getTime();
+            const dateB = new Date(b.jornada.fechaInicio).getTime();
+
+            return dateA - dateB;
+        });
+
+        return tarjetas;
     }
    
 }
