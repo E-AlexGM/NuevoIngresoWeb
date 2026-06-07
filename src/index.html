@@ -1,9 +1,75 @@
-<html>
-  <head>
-    <title>Nuevo Ingreso</title>
-  </head>
-  <body>
-    <h1>Nuevo Ingreso Universidad de El Salvador</h1>
-    <script src="./js/boundary/prueba.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Ingreso | UES</title>
+    <link rel="stylesheet" href="./estilos/index.css">
+</head>
+<body> 
+    <div class="layout-grid">
+        <header>
+            <ui-nav></ui-nav>
+        </header>
+        
+        <main>
+            <section class="vista-inicio" id="vistaInicio">
+                <div class="hero-contenedor">
+                    <div class="hero-texto">
+                        <span class="eyebrow-text">Universidad de El Salvador</span>
+                        <h1>Proceso de Nuevo Ingreso</h1>
+                        <p class="descripcion-general">
+                            Bienvenido al portal oficial de aspirantes. Aquí podrás realizar tu registro inicial, seleccionar las carreras de tu interés y dar seguimiento a todas las fases de tu proceso de admisión. ¡Inicia tu camino universitario hoy!
+                        </p>
+                        
+                        <div class="pasos-grid">
+                            <div class="paso-item">
+                                <div class="paso-numero">1</div>
+                                <span>Crea tu perfil</span>
+                            </div>
+                            <div class="paso-item">
+                                <div class="paso-numero">2</div>
+                                <span>Elige tu carrera</span>
+                            </div>
+                            <div class="paso-item">
+                                <div class="paso-numero">3</div>
+                                <span>Haz tu prueba</span>
+                            </div>
+                        </div>
+
+                        <div class="hero-acciones">
+                            <button id="btnIrRegistro" class="btn-principal">REGÍSTRATE AQUÍ</button>
+                            <a href="#" class="link-secundario">¿Ya tienes cuenta? Inicia sesión</a>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-grafico">
+                        <div class="circulo-decorativo">🎓</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="vistaRegistro" style="display: none;">
+                <registro-aspirante></registro-aspirante>
+            </section>
+        </main>
+        
+        <footer></footer>
+    </div>
+    <script type="module" src="./js/boundary/componentes/ui_nav.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnRegistro = document.getElementById('btnIrRegistro');
+            const vistaInicio = document.getElementById('vistaInicio');
+            const vistaRegistro = document.getElementById('vistaRegistro');
+
+            if(btnRegistro) {
+                btnRegistro.addEventListener('click', () => {
+                  window.location.href = 'registro_aspirante.html';
+                });
+            }
+        });
+    </script>
+</body>
 </html>
