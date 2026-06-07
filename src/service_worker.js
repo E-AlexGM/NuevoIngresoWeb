@@ -24,6 +24,8 @@ const ARCHIVOS_CACHE = [
     '/estilos/componentes/tarjeta_clave.css',
     '/estilos/componentes/ui_card.css',
     '/estilos/index.css',
+    '/estilos/componentes/grid_tarjetas.css',     
+    '/estilos/elementos_simples.css',             
 
     '/js/lib/lit-html/lit-html.js',
 
@@ -33,6 +35,7 @@ const ARCHIVOS_CACHE = [
     '/js/boundary/prueba_clave_area.js',
     '/js/boundary/registro_aspirante.js',
     '/js/boundary/dto/card_examen_dto.js',
+    '/js/boundary/dto/aula_dto.js',               
 
     '/js/boundary/componentes/arbol_colapsable.js',
     '/js/boundary/componentes/datos_componente.js',
