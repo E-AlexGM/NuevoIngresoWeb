@@ -122,8 +122,8 @@ class VistaRegistroAspirante extends HTMLElement {
         this.datos = { documentoIdentidad: '', nombres: '', apellidos: '', fechaNacimiento: '', correo: '' };
         this.carrerasSeleccionadas = [null, null, null];
         this.errorMensaje = '';
-        
-        // Limpiamos los selectores visuales llamando al método del subcomponente
+        const formDatos = this._root.querySelector('form-datos-personales');
+        if (formDatos && typeof formDatos.limpiar === 'function') formDatos.limpiar();
         const formCarreras = this._root.querySelector('form-seleccion-carreras');
         if (formCarreras) formCarreras.limpiar();
         

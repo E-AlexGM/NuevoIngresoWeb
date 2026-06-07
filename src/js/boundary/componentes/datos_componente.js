@@ -39,6 +39,21 @@ class FormDatosPersonales extends HTMLElement {
         return true;
     }
 
+    limpiar() {
+        this._datos = {
+            documentoIdentidad: '',
+            nombres: '',
+            apellidos: '',
+            fechaNacimiento: '',
+            correo: ''
+        };
+
+        const inputs = this._root.querySelectorAll('input');
+        inputs.forEach(input => input.value = '');
+
+        this._dibujar();
+    }
+
     _template() {
         const fechaMax = new Date();
         fechaMax.setFullYear(fechaMax.getFullYear() - 10);
