@@ -222,8 +222,14 @@ class FrmProcesos extends HTMLElement{
                                         jornada.aulas = this.jornadaAulaDao.findRange(0, 50)
                                             .then(aulaResultados => {
                                                 jornada.aulas = aulaResultados.datos.map(aulaDto => {
+                                                    console.log("mira esto", aulaDto);
+                                    
+                                                    if(!aulaDto) return null;
+
                                                     return Object.assign(new AulaDto(), aulaDto);
-                                                });
+
+                                                    
+                                                }).filter(aula => aula !== null);
                                                 console.log(jornada.aulas)
                                                 this._draw();
                                             });
