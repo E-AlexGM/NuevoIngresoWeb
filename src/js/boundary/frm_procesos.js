@@ -1,11 +1,14 @@
 import PruebaDAO from "../control/prueba_dao.js";
 import PruebaJornadaDAO from "../control/prueba_jornada_dao.js";
+import JornadaAulaDAO from "../control/jornada_aula_dao.js";
+import DAO from "../control/jornada_aula_dao.js";
 import Prueba from "../entity/prueba.js";
 import Jornada from "../entity/jornada.js";
 import {html, render} from "../lib/lit-html/lit-html.js";
 import SelectorBuscador from './componentes/selector_buscador.js'; 
 import VistaPruebaClaveArea from './prueba_clave_area.js';
 import SearchNav from './componentes/search_nav.js';
+import AulaDto from "./dto/aula_dto.js";
 
 
 class FrmProcesos extends HTMLElement{
@@ -92,6 +95,9 @@ class FrmProcesos extends HTMLElement{
                                 ` : html `<p>No hay jornadas asociadas a esta prueba.</p>`) 
                             : html `<p><em>Cargando jornadas...</em></p>`}
                         </div>
+                        <div slot="action">
+                            <button>Ver Detalles</button>
+                        </div>
                     </ui-card>
                 `)    
             : html `<p style="grid-column: 1 / -1; color: #666;">No se encontraron pruebas con ese nombre.</p>`}
@@ -113,6 +119,7 @@ class FrmProcesos extends HTMLElement{
 
     /**
      * Carga las pruebas cuyo estado activo es true 
+     * Carga también las aulas asociadas a cada jornada y renderiza las tarjetas 
      * Carga además las jornadas asociada a cada prueba
      * Dispara el dibujo
      */
@@ -131,12 +138,28 @@ class FrmProcesos extends HTMLElement{
                                 prueba.jornadas = jornadaResultados.datos.map(jornadaDto => {
                                     return Object.assign(new Jornada(), jornadaDto);
                                 });
-
-                            }).then(() => this._draw());
+                                this._draw();
+                                return Promise.all(
+                                    prueba.jornadas.map(jornada => {
+                                        this.jornadaAulaDao = new JornadaAulaDAO(jornada.idJornada);
+                                        jornada.aulas = this.jornadaAulaDao.findRange(0, 50)
+                                            .then(aulaResultados => {
+                                                jornada.aulas = aulaResultados.datos.map(aulaDto => {
+                                                    return Object.assign(new AulaDto(), aulaDto);
+                                                });
+                                                console.log(jornada.aulas)
+                                                this._draw();
+                                            });
+                                       return jornada;
+                                    })
+                                );
+                                 
+                            });
                     })
                 ); 
             })
             .catch(error => console.error("Error cargando datos:", error));
+            
     }
 
     /**
