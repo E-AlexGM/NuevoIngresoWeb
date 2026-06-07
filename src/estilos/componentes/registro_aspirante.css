@@ -1,11 +1,7 @@
 .registro-wrapper {
     max-width: 73.75rem;
-    margin: 2rem auto;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    background: linear-gradient(180deg, #fffaf8 0%, #ffffff 34%);
-    border: 1px solid #e7e5e4;
-    box-shadow: 0 1.25rem 3.125rem rgba(15, 23, 42, 0.08);
+    margin: 0 auto;
+    padding: 1rem 0; 
     font-family: Arial, sans-serif;
     color: #333;
 }
@@ -58,7 +54,7 @@
     padding: 1rem 2.8125rem;
     font-size: 1.1rem;
     font-weight: 700;
-    border-radius: 62.5rem; /* Botón en forma de píldora */
+    border-radius: 62.5rem; 
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
     width: 100%;
@@ -112,12 +108,9 @@
     text-decoration: underline;
 }
 
-/* Responsividad */
 @media (max-width: 53.75rem) {
     .registro-wrapper {
-        padding: 1.125rem;
-        margin: 1.125rem 0.625rem;
-        border-radius: 1.125rem;
+        padding: 1rem;
     }
     .formulario-grid {
         grid-template-columns: 1fr;
