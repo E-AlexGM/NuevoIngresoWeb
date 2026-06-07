@@ -37,14 +37,19 @@ class FrmResultados extends HTMLElement {
     
     _templateSearchExam(){
         return html`
-            <h3>Ingrese su correo electrónico</h3>
-            <input type="email" name="correo">
+            <link rel="stylesheet" href="./estilos/elementos_simples.css">
+            <div class="campo-formulario">
+                <label for="txtCorreoResultado">Ingrese su correo Electrónico</label>
+                <input id="txtCorreoResultado" type="email" name="correo" class="input-base" placeholder="someone@example.com">
+            </div>
         `;
     }
 
     _templateExamResults(){
           return html`
-            <link rel="stylesheet" href="./estilos/layout/admin.css">
+               <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
+            <link rel="stylesheet" href="./estilos/componentes/prueba_clave_area.css">
+
             <h2>Resultados</h2>
             <p>Estos son los resultados de la búsqueda.</p>
 
@@ -53,7 +58,7 @@ class FrmResultados extends HTMLElement {
                     <ui-card>
                         <div slot="content">
                             <p>Nombre de la prueba: ${item.nombrePrueba || '-'}</p>
-                            <p>Fecha de realización: ${item.fechaRealizacion || '-'}</p>
+                            <p>Fecha de realización: ${this._formatDate(item.fechaRealizacion) || '-'}</p>
                             <p>Resultado: ${item.resultado || '-'}</p>
                         </div>
                     </ui-card>
@@ -64,18 +69,45 @@ class FrmResultados extends HTMLElement {
         `;
     }
 
+
+
     _template(){
         return html`
+            <link rel="stylesheet" href="./estilos/elementos_simples.css">
+
             <div>
                 <form @submit=${(e) => this.handleSubmit(e)}>
                         ${this.currentStep === 1 ? this._templateSearchExam() : this._templateExamResults()}
-                        ${this.currentStep > 1 ? html`<button type="button"  @click=${() => this.prevStep()}>Anterior</button>` : ''}
+                        ${this.currentStep > 1 ? html`<button type="button"  class="btn btn-primario" @click=${() => this.prevStep()}>Anterior</button>` : ''}
                         ${this.currentStep < this.totalSteps ? html`<button type="submit">Buscar</button>` : ''}
+                      
                     </div>
                 </form>
            </div>
         `;
     }
+
+      /**
+     * Convierte una cadena ISO a un formato legible en español
+     */
+    _formatDate(isoString) {
+        if (!isoString) return 'Sin fecha';
+        
+        const date = new Date(isoString);
+        
+        // Verificamos si la fecha es válida, si no lo es, devolvemos el string original
+        if (isNaN(date.getTime())) return isoString;
+
+        return new Intl.DateTimeFormat('es-SV', {
+            year: 'numeric',
+            month: 'short',  
+            day: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true    
+        }).format(date);
+    }
+
 
     draw() {        
         if (this.container !== undefined) {

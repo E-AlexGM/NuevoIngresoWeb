@@ -52,67 +52,144 @@ class FrmProcesos extends HTMLElement{
         }
     }
 
-    _templateTemario(){
+    _templateDetalles(){
         return html `
             <div>
-                <prueba-clave-area .idPrueba="${this.idPruebaSeleccionada}"></prueba-clave-area>
+                <prueba-clave-area .idPrueba="${this.idPruebaSeleccionada}">
+                </prueba-clave-area>
             </div>
 
         `;
     }
 
-    _templateProcesos(){
+
+    _templateProcesos() {
         const pruebasFiltradas = this.pruebasList.filter(prueba => {
-            if (!this.filtroBusqueda) return true; // Si no hay filtro, mostramos todas
-            
+            if (!this.filtroBusqueda) return true;
             const termino = this.filtroBusqueda.toLowerCase();
             const nombre = prueba.nombre ? prueba.nombre.toLowerCase() : '';
             return nombre.includes(termino);
         });
-       return html `
+        
+        return html `
         <link rel="stylesheet" href="./estilos/layout/admin.css">
+        <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
+        <link rel="stylesheet" href="./estilos/componentes/prueba_clave_area.css">
 
-        <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
+            <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
+
 
         <div class="grid-tarjetas">              
             ${pruebasFiltradas.length > 0 ? 
                 pruebasFiltradas.map(prueba => html `
-                    <ui-card data-id="${prueba.idPrueba}" @click=${() => this._selectPrueba(prueba.idPrueba)}>
-                        <div slot="content">
-                            <p>Nombre de la prueba: ${prueba.nombre || '-'}</p>
-                            <p>Duración de la prueba: ${prueba.duracion || '-'}</p>
-                            <p>Estado de la prueba: ${prueba.activo ? 'Activo' : 'Inactivo'|| '-'}</p>
-                            <p>Tipo de la prueba: ${prueba.idTipoPrueba.valor || '-'}</p>
-                            <hr>
-                            <h4>Jornadas de la prueba:</h4>
-                            ${prueba.jornadas ? 
-                                (prueba.jornadas.length > 0 ? html `
-                                    <ul>
-                                        ${prueba.jornadas.map(jornada => html`
-                                            <li>${jornada.fechaInicio} - ${jornada.fechaFin || 'Sin fecha'}</li>
-                                        `)}
-                                    </ul>
-                                ` : html `<p>No hay jornadas asociadas a esta prueba.</p>`) 
-                            : html `<p><em>Cargando jornadas...</em></p>`}
-                        </div>
-                        <div slot="action">
-                            <button>Ver Detalles</button>
-                        </div>
-                    </ui-card>
+                    ${prueba.jornadas ? 
+                        (prueba.jornadas.length > 0 ? 
+                            prueba.jornadas.map(jornada => html`
+                                <div class="r">
+                                <ui-card  data-id="${prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(prueba.idPrueba)}>
+                                    <div slot="title vista-encabezado">
+                                    
+                                    </div>
+                                    <div slot="content">
+                                        <h3 class="tarjeta-etiqueta">
+                                         ${prueba.nombre}     
+                                        </h3>
+                                        <p class="tarjeta-subtitulo">                     
+                                            ${prueba.idTipoPrueba && prueba.idTipoPrueba.valor ? prueba.idTipoPrueba.valor : 'Prueba'}
+                                        </p>
+                                    </h3>   
+                                        <hr class="tarjeta-separador">
+                                        <div class="tarjeta-seccion tarjeta-fechas" >
+
+                                            <div class="fecha-item">
+                                                <h4 class="tarjeta-subtitulo">Inicio</h4>
+                                                <p class="tarjeta-texto">${this._formatDate(jornada.fechaInicio)}</p>
+                                            </div>
+                                            <div class="fecha-item">
+                                                <h4 class="tarjeta-subtitulo">Fin</h4>
+                                                <p class="tarjeta-texto">${this._formatDate(jornada.fechaFin)}</p>
+                                            </div>
+                                        </div>
+                                        <div class="tarjeta-seccion">
+                                        ${jornada.aulas ? 
+                                            (jornada.aulas.length > 0 ? html`
+                                                <details class="tarjeta-desplegable">
+                                                    <summary class="tarjeta-subtitulo interactivo" @click=${(e) => e.stopPropagation()}>
+                                                        <span>Ver sedes disponibles</span>
+                                                        <span class="icono-flecha">▼</span>
+                                                    </summary>
+                                                    <div class="desplegable-contenido">
+                                                        <ul class="tarjeta-lista">
+                                                            ${jornada.aulas.map(aula => html`
+                                                               ${aula.sede ? html `<li>Sede:<b>${aula.sede}</b></li>`: ''}
+
+
+                                                            `)}
+                                                        </ul>
+                                                    </div>
+                                                </details>
+                                            ` : html `
+                                                <h4 class="tarjeta-subtitulo"> Sedes</h4>
+                                                <p class="tarjeta-vacio">Sin sedes asignadas</p>
+                                        `) 
+                                        : html `
+                                            <h4 class="tarjeta-subtitulo"> Sedes</h4>
+                                            <p class="tarjeta-vacio">Cargando sedes...</p>
+                                        `}
+                                                                                            
+                            </ui-card>
+                            <div>
+                                       `)
+                        : html `
+                            <ui-card @click=${() => this._selectPrueba(prueba.idPrueba)}>
+                                <div slot="content">
+                                    <h3>${prueba.nombre || 'Sin nombre'}</h3>
+                                    <p><b>Estado:</b> ${prueba.activo ? 'Activa' : 'Inactiva'}</p>
+                                    <p ><em>Esta prueba aún no tiene jornadas asignadas.</em></p>
+                                </div>
+                                <div slot="action">
+                                    <button>Ver detalles</button>
+                                </div>
+                                </div> </div>
+                            </ui-card>
+                        `)
+                    : html `<em>Cargando jornadas de ${prueba.nombre}...</em></p>`}
                 `)    
-            : html `<p style="grid-column: 1 / -1; color: #666;">No se encontraron pruebas con ese nombre.</p>`}
+            : html `<p>No se encontraron pruebas.</p>`}
         </div>
         `;
     }
 
+    /**
+     * Convierte una cadena ISO a un formato legible en español
+     */
+    _formatDate(isoString) {
+        if (!isoString) return 'Sin fecha';
+        
+        const date = new Date(isoString);
+        
+        // Verificamos si la fecha es válida, si no lo es, devolvemos el string original
+        if (isNaN(date.getTime())) return isoString;
+
+        return new Intl.DateTimeFormat('es-SV', {
+            year: 'numeric',
+            month: 'short',  
+            day: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true    
+        }).format(date);
+    }
+
     _handleSearch(e) {
         this.filtroBusqueda = e.detail.term;
+
         this._draw(); // Forzamos un re-render
     }
 
     _template(){
         return html `
-           ${this.currentStep === 1 ? this._templateProcesos() : this._templateTemario()}
+           ${this.currentStep === 1 ? this._templateProcesos() : this._templateDetalles()}
         `;       
     }
 

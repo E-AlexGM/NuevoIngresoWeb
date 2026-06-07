@@ -23,8 +23,35 @@ class SearchNav extends HTMLElement {
 
     _template() {
         return html`
-          <div>
+            <style>
+                .input-base {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                font-family: inherit;
+                font-size: 0.95rem;
+                color: var(--color-texto);
+                background-color: var(--color-bg-input);
+                border: 1px solid var(--color-borde);
+                border-radius: 0.5rem; /* Curva suave, no tan redonda como el layout */
+                transition: all 0.2s ease;
+                outline: none;
+                box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+                }
+
+                /* Efecto Elegante al seleccionar el input */
+                .input-base:focus {
+                    border-color: var(--color-acento);
+                    /* Un "anillo" suave del color guinda para accesibilidad */
+                    box-shadow: 0 0 0 3px rgba(146, 43, 33, 0.1); 
+                }
+
+                .input-base::placeholder {
+                    color: #a8a29e;
+                }
+            </style>
+          <div class="campo-formulario">
                 <input 
+                    class="input-base" 
                     type="search" 
                     placeholder="Buscar prueba por nombre..." 
                     @input=${this._handleInput.bind(this)} 

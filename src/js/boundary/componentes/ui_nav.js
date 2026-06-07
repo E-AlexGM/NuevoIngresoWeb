@@ -59,12 +59,77 @@ class UiNav extends HTMLElement {
     }
 
     _template(){
-        return html`
-            <nav>
-                <a href="/resultados.html">Resultados</a>
-                <a href="/procesos.html">Proceso</a>
-                <a href="/registro_aspirante.html">Registro</a>
-                
+        return html`  
+       <style>
+                .menu-navegacion {
+                    display: flex;
+                    align-items: center;
+                    gap: 2.25rem;
+                    height: 100%;
+                    /* ELIMINADOS: border-bottom y margin-bottom para evitar el choque con el <header> */
+                    font-family: Arial, sans-serif;
+                }
+
+                .enlace-nav {
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
+                    /* Un padding vertical para que el clic sea cómodo sin deformar el header */
+                    padding: 1.25rem 0; 
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    color: #5b6472;
+                    text-decoration: none;
+                    transition: color 0.25s ease;
+                }
+
+                .enlace-nav::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0; /* Ahora se pega al fondo de su propio padding */
+                    left: 0;
+                    width: 100%;
+                    height: 3px;
+                    background-color: #922b21;
+                    border-radius: 3px 3px 0 0;
+                    transform: scaleX(0);
+                    transition: transform 0.2s ease;
+                }
+
+                .enlace-nav:hover {
+                    color: #1f2937;
+                }
+
+                .enlace-nav:hover::after {
+                    transform: scaleX(1);
+                }
+
+                .enlace-nav.activo {
+                    color: #922b21;
+                    font-weight: 700;
+                }
+
+                .enlace-nav.activo::after {
+                    transform: scaleX(1);
+                }
+
+                @media (max-width: 35rem) {
+                    .menu-navegacion {
+                        gap: 1.5rem;
+                        justify-content: center;
+                    }
+                    
+                    .enlace-nav {
+                        padding: 1rem 0;
+                    }
+                }
+            </style>
+
+            <nav class="menu-navegacion">
+                <a class="enlace-nav" href="/index.html">Inicio</a>
+                <a class="enlace-nav" href="/procesos.html">Procesos</a>
+                <a class="enlace-nav" href="/registro_aspirante.html">Registro Aspirante</a>
+                <a class="enlace-nav" href="/resultados.html">Resultados</a>
                 <button 
                     id="InstalarPWA" 
                     @click="${() => this.manejarClickInstalacion()}"
