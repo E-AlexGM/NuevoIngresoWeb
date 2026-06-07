@@ -53,7 +53,7 @@ class VistaPruebaClaveArea extends HTMLElement {
             })
             .catch((error) => {
                 this.cargando = false;
-                this.errorMensaje = error && error.mensaje ? error.mensaje : 'No se pudo cargar la información de la prueba.';
+                this.errorMensaje = 'No existe información para esta prueba.';
                 this._dibujar();
                 this.notificar(this.errorMensaje, 'error');
             });
