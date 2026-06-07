@@ -86,7 +86,7 @@ class FrmProcesos extends HTMLElement{
                         (prueba.jornadas.length > 0 ? 
                             prueba.jornadas.map(jornada => html`
                                 <div class="r">
-                                <ui-card  data-id="${prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(prueba.idPrueba)}>
+                                <ui-card data-id="${prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(prueba.idPrueba)}>
                                     <div slot="title vista-encabezado">
                                     
                                     </div>
@@ -205,7 +205,7 @@ class FrmProcesos extends HTMLElement{
             .then(resultados =>{
                 this.pruebasList = resultados.datos.map(pruebaDto => {
 
-                    if(!pruebaDto) return null;
+                    if(!pruebaDto || !pruebaDto.idPrueba) return null;
                     return Object.assign(new Prueba(), pruebaDto);
                 }).filter(prueba => prueba !== null);
                 this._draw();
@@ -227,7 +227,7 @@ class FrmProcesos extends HTMLElement{
                                             .then(aulaResultados => {
                                                 jornada.aulas = aulaResultados.datos.map(aulaDto => {
                                     
-                                                    if(!aulaDto) return null;
+                                                    if(!aulaDto || !aulaDto.idAula) return null;
 
                                                     return Object.assign(new AulaDto(), aulaDto);
 
