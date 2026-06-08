@@ -328,7 +328,7 @@ describe("Method: update()", function () {
         .catch(done);
     });
 
-    it("Debe rechazar al intentar modificar una prueba inexistente (500 o CORS Error)", function (done) {
+    it("Debe rechazar al intentar modificar una prueba inexistente (404 o CORS Error)", function (done) {
       const pruebaActualizada = { nombre: "Prueba Fantasma" };
       cut
         .update("123e4567-e89b-12d3-a456-426614174999", pruebaActualizada)
@@ -338,7 +338,7 @@ describe("Method: update()", function () {
         .catch((error) => {
           try {
             chai.expect(error).to.have.property("mensaje");
-            chai.expect(error.mensaje).to.match(/Error al modificar los datos: 500|Error al acceder al repositorio/);
+            chai.expect(error.mensaje).to.match(/Error al modificar los datos: 404|Error al acceder al repositorio/);
             done();
           } catch (assertError) {
             done(assertError);
