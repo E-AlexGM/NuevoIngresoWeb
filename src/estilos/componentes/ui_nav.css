@@ -1,9 +1,17 @@
+:host {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
 .menu-navegacion {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 2rem;
     height: 100%;
     font-family: Arial, sans-serif;
+    position: relative;
 }
 
 .nav-logo-link {
@@ -62,7 +70,8 @@
 }
 
 .btn-instalar {
-    margin-left: auto;
+    position: absolute;
+    right: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -75,6 +84,12 @@
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Usar visibility en lugar de display para ocultar */
+    visibility: visible;
+}
+
+.btn-instalar.oculto {
+    visibility: hidden;  /* Mantiene el espacio pero lo oculta */
 }
 
 .btn-instalar:hover {
@@ -89,20 +104,32 @@
 @media (max-width: 35rem) {
     .menu-navegacion {
         gap: 1.25rem;
-        justify-content: center;
-        flex-wrap: wrap;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
-    .btn-instalar {
-        margin-left: 0;
+    .menu-navegacion::-webkit-scrollbar {
+        display: none; 
     }
 
     .enlace-nav {
         padding: 0.9rem 0;
+        white-space: nowrap; 
     }
 
     .nav-logo {
         height: 2.2rem;
         width: 2.2rem;
+        flex-shrink: 0; 
+    }
+
+    .btn-instalar {
+        position: static;
+        flex-shrink: 0; 
     }
 }
