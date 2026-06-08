@@ -21,6 +21,7 @@ class VistaRegistroAspirante extends HTMLElement {
         this.carrerasSeleccionadas = [null, null, null]; 
         this.errorMensaje = '';
         this.catalogoCarreras = [];
+        this.errorCargaDatos = false;
     }
 
     connectedCallback() {
@@ -37,7 +38,7 @@ class VistaRegistroAspirante extends HTMLElement {
                 }
             })
             .catch(error => {
-                this.errorMensaje = 'Ocurrió un error. Por favor, intentalo más tarde.';
+                this.errorCargaDatos = true;
                 this._dibujar();
             });
     }
@@ -176,6 +177,17 @@ class VistaRegistroAspirante extends HTMLElement {
     }
 
     _template() {
+        if (this.errorCargaDatos) {
+            return html`
+                <link rel="stylesheet" href="./estilos/componentes/registro_aspirante.css">
+                <div class="mensaje-error-pantalla">
+                    <div class="icono-error">⚠️</div>
+                    <h3>Ocurrió un problema</h3>
+                    <p>No pudimos cargar la información necesaria en este momento. Por favor, comprueba tu conexión o inténtalo más tarde.</p>
+                </div>
+            `;
+        }
+
         return html`
             <link rel="stylesheet" href="./estilos/componentes/registro_aspirante.css">
 
