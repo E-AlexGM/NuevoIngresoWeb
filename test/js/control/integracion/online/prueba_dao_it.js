@@ -299,7 +299,55 @@ describe("PruebaDAO Integration Tests - Online", function () {
     });
   });
 
+describe("Method: update()", function () {
+    it("Debe actualizar la prueba creada exitosamente (200) y verificar cambios", function (done) {
+      const pruebaActualizada = {
 
+        nombre: "Prueba de Ingreso Modificada",
+        indicaciones: "Lee cuidadosamente cada pregunta (Modificado)",
+        puntajeMaximo: 100,
+        notaAprobacion: 70,
+        duracion: 150,     
+        fechaCreacion: new Date().toISOString(),
+        idTipoPrueba: { idTipoPrueba: idTipoPruebaCreado },
+        activo: true
+      };
+
+      cut
+        .update(idCreado, pruebaActualizada)
+        .then((response) => {
+          chai.expect(response).to.be.an.instanceOf(DefaultResponse);
+          return cut.findById(idCreado);
+        })
+        .then((resFind) => {
+          chai.expect(resFind.datos.nombre).to.equal("Prueba de Ingreso Modificada");
+          chai.expect(resFind.datos.notaAprobacion).to.equal(70);
+          chai.expect(resFind.datos.duracion).to.equal(150);
+          done();
+        })
+        .catch(done);
+    });
+
+    it("Debe rechazar al intentar modificar una prueba inexistente (500 o CORS Error)", function (done) {
+      const pruebaActualizada = { nombre: "Prueba Fantasma" };
+      cut
+        .update("123e4567-e89b-12d3-a456-426614174999", pruebaActualizada)
+        .then(() => {
+          done(new Error("La actualización debería haber fallado para un ID inexistente"));
+        })
+        .catch((error) => {
+          try {
+            chai.expect(error).to.have.property("mensaje");
+            chai.expect(error.mensaje).to.match(/Error al modificar los datos: 500|Error al acceder al repositorio/);
+            done();
+          } catch (assertError) {
+            done(assertError);
+          }
+        });
+    });
+
+    
+  });
 
   describe("Method: delete()", function () {
     it("Debe eliminar la prueba creada y rechazar al intentar encontrarla", function (done) {
