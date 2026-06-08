@@ -84,12 +84,11 @@
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    /* Usar visibility en lugar de display para ocultar */
     visibility: visible;
 }
 
 .btn-instalar.oculto {
-    visibility: hidden;  /* Mantiene el espacio pero lo oculta */
+    visibility: hidden;  
 }
 
 .btn-instalar:hover {
@@ -101,7 +100,7 @@
     transform: translateY(0);
 }
 
-@media (max-width: 35rem) {
+@media (max-width: 55rem) {
     .menu-navegacion {
         gap: 1.25rem;
         justify-content: flex-start;
