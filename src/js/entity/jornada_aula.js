@@ -2,7 +2,7 @@ class JornadaAula {
     constructor() {
         this.idJornadaAula = null;
         this.idJornada = null;
-        this.idAula = "";
+        this.idAula = null;
         this.idDocente = null;
     }
 }

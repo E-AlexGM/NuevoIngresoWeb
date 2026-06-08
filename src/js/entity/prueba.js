@@ -8,6 +8,7 @@ class Prueba {
         this.duracion = null;
         this.fechaCreacion = null;
         this.idTipoPrueba = null;
+        this.activo = true;
     }
 }
 
