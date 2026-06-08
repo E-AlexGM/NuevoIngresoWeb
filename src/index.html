@@ -12,13 +12,13 @@
         <header>
             <ui-nav></ui-nav>
         </header>
-        
+
         <hgroup>
             <span class="eyebrow-text">Universidad de El Salvador</span>
             <h1>Proceso de Nuevo Ingreso</h1>
-            <h3>Portal oficial de registro y seguimiento para aspirantes</h3>
+            <p>Portal oficial de registro y seguimiento para aspirantes</p>
         </hgroup> 
-        
+
         <main>
             <section class="vista-inicio" id="vistaInicio">
                 <div class="hero-contenedor">
@@ -27,7 +27,6 @@
                         <p class="descripcion-general">
                             Bienvenido al portal oficial de aspirantes. Aquí podrás realizar tu registro inicial, seleccionar las carreras de tu interés y dar seguimiento a todas las fases de tu proceso de admisión. ¡Inicia tu camino universitario hoy!
                         </p>
-                        
                         <div class="pasos-grid">
                             <div class="paso-item">
                                 <div class="paso-numero">1</div>
@@ -51,17 +50,25 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="hero-acciones">
                             <button id="btnIrRegistro" class="btn-principal">REGÍSTRATE AQUÍ</button>
                             <a href="#" class="link-secundario">¿Ya tienes cuenta? Inicia sesión</a>
                         </div>
                     </div>
-                    
+
                     <div class="hero-grafico">
                         <div class="animacion-contenedor">
                             <div class="circulo-decorativo">
-                                <div class="emoji-flotante">🎓</div>
+                                <svg width="140" height="140" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16,88 Q60,72 60,72 L60,100 Q16,116 16,100 Z" fill="#c0392b" opacity="0.85"/>
+                                    <path d="M104,88 Q60,72 60,72 L60,100 Q104,116 104,100 Z" fill="#1a2744" opacity="0.85"/>
+                                    <rect x="57" y="72" width="6" height="28" rx="1" fill="#2c3e6b"/>
+                                    <rect x="26" y="46" width="68" height="9" rx="3" fill="#1a2744"/>
+                                    <polygon points="60,26 90,42 60,50 30,42" fill="#1a2744"/>
+                                    <line x1="90" y1="42" x2="90" y2="60" stroke="#c0392b" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="90" cy="63" r="4" fill="#c0392b"/>
+                                    <circle cx="60" cy="26" r="3" fill="#c0392b"/>
+                                </svg>
                             </div>
                             <div class="sombra-flotante"></div>
                         </div>
@@ -73,19 +80,22 @@
                 <registro-aspirante></registro-aspirante>
             </section>
         </main>
-        
-        <footer></footer>
+
+        <footer>
+            <p>© 2026 Universidad de El Salvador &nbsp;·&nbsp;
+               <a href="#">Aviso de privacidad</a> &nbsp;·&nbsp;
+               <a href="#">Soporte técnico</a>
+            </p>
+        </footer>
     </div>
-    
+
     <script type="module" src="./js/boundary/componentes/ui_nav.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const btnRegistro = document.getElementById('btnIrRegistro');
-
-            if(btnRegistro) {
+            if (btnRegistro) {
                 btnRegistro.addEventListener('click', () => {
-                  // Redirección a tu vista real
-                  window.location.href = 'registro_aspirante.html';
+                    window.location.href = 'registro_aspirante.html';
                 });
             }
         });

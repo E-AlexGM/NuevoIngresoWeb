@@ -61,7 +61,7 @@
 
 .paso-item:hover {
     transform: translateY(-4px);
-    border-color: #f1d9d5; /* Borde rojo suave */
+    border-color: #f1d9d5;
     background-color: #ffffff;
     box-shadow: 0 10px 15px -3px rgba(146, 43, 33, 0.05), 0 4px 6px -2px rgba(146, 43, 33, 0.025);
 }
@@ -115,7 +115,7 @@
     padding: 1.125rem 3rem;
     font-size: 1.1rem;
     font-weight: 700;
-    border-radius: 62.5rem; /* Forma de píldora */
+    border-radius: 62.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 0.25rem 0.625rem rgba(146, 43, 33, 0.2);
@@ -160,14 +160,12 @@
 .circulo-decorativo {
     width: clamp(16rem, 25vw, 22rem);
     height: clamp(16rem, 25vw, 22rem);
-    background: radial-gradient(circle at top left, #fff4f2 0%, #fdecec 100%);
+    background: #fdf4f2;
     border-radius: 50%;
+    border: 1px solid #f1d9d5;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 6rem;
-    box-shadow: inset 0 0 3rem rgba(146, 43, 33, 0.08), 
-                0 20px 40px rgba(146, 43, 33, 0.05);
     animation: flotar 4s ease-in-out infinite;
 }
 
@@ -181,17 +179,43 @@
 }
 
 @keyframes flotar {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-20px); }
     100% { transform: translateY(0px); }
 }
 
 @keyframes sombra {
-    0% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(0.85); opacity: 0.2; }
+    0%   { transform: scale(1); opacity: 0.6; }
+    50%  { transform: scale(0.85); opacity: 0.2; }
     100% { transform: scale(1); opacity: 0.6; }
 }
 
+/* Correcciones hgroup */
+hgroup h1 {
+    font-size: clamp(1.5rem, 2vw, 2.2rem);
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px;
+}
+
+hgroup p {
+    font-size: 0.98rem;
+    color: #5b6472;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* Footer links */
+footer a {
+    color: #f1d9d5;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
     .hero-contenedor {
         grid-template-columns: 1fr;
