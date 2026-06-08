@@ -1,59 +1,79 @@
+:host {
+    display: block;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
 .card {
     background-color: #ffffff;
-    border-radius: 8px; 
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    padding: 24px;
-    text-align: center;
+    border-radius: 1rem; 
+    border: 1px solid #e7e5e4; 
+    
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+                0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
     height: 100%;
-    transition: all 0.2s ease;
+    box-sizing: border-box;
+    
+    /* Transiciones fluidas para el hover */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s ease;
 }
 
 .card:hover {
-    border-color: #2563eb;
-    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1);
+    transform: translateY(-5px); 
+    
+    box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08), 
+                0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    border-color: #922b21; 
 }
 
-.card img {
-    max-width: 100px;
-    height: 80px;
-    object-fit: contain;
-    margin-bottom: 16px;
-    transition: transform 0.2s ease;
-}
-
-.card:hover img {
-    transform: scale(1.05); 
-}
-
-.card h3 {
+::slotted([slot="title"]) {
     color: #1f2937;
-    font-size: 1rem;
-    margin: 0 0 16px 0;
-    font-weight: 600;
-    line-height: 1.5;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f3f4f6; 
+    width: 100%;
+    line-height: 1.3;
 }
 
-.btn {
-    display: inline-block;
-    background-color: #2563eb;
-    color: #ffffff;
-    padding: 8px 20px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.875rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
+::slotted([slot="content"]) {
+    flex-grow: 1; 
+    color: #4b5563; 
+    font-size: 0.95rem;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; 
+    width: 100%;
 }
 
-.btn:hover {
-    background-color: #1d4ed8;
-    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+::slotted([slot="action"]) {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+@media (max-width: 35rem) {
+    .card {
+        padding: 1.25rem; 
+        border-radius: 0.75rem;
+    }
+    
+    ::slotted([slot="title"]) {
+        font-size: 1.05rem; 
+    }
+
+    ::slotted([slot="action"]) {
+        justify-content: center; 
+        flex-direction: column; 
+    }
 }

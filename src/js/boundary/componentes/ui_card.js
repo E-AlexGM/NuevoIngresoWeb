@@ -19,10 +19,9 @@ class UiCard extends HTMLElement {
             render(this._template(), this.container);
         }
     }
-
     _template() {
         return html`
-            <link rel="stylesheet" href="../../estilos/componentes/ui_card.css">  
+           <link rel="stylesheet" href="./estilos/componentes/ui_card.css">
             <div class="card">
                 <slot class="" name="title"></slot>
                 <slot name="content"></slot>

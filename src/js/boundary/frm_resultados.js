@@ -2,6 +2,7 @@ import { html, render } from "../lib/lit-html/lit-html.js";
 import ExamenDAO from "../control/examen_dao.js";
 import CardExamenDto from "./dto/card_examen_dto.js";
 import Prueba from "../entity/prueba.js";
+import NotificacionToast from "./componentes/notificacion_toast.js";
 
 class FrmResultados extends HTMLElement {
 
@@ -46,24 +47,40 @@ class FrmResultados extends HTMLElement {
     }
 
     _templateExamResults(){
-          return html`
-               <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
-            <link rel="stylesheet" href="./estilos/componentes/prueba_clave_area.css">
-
+        return html`
+            <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
             <h2>Resultados</h2>
             <p>Estos son los resultados de la búsqueda.</p>
-
-            ${this.cardExamenDtoList ? this.cardExamenDtoList.map(item => html` 
+            ${this.cardExamenDtoList && this.cardExamenDtoList.length > 0 ? html` 
                 <div class="grid-tarjetas">              
-                    <ui-card>
-                        <div slot="content">
-                            <p>Nombre de la prueba: ${item.nombrePrueba || '-'}</p>
-                            <p>Fecha de realización: ${this._formatDate(item.fechaRealizacion) || '-'}</p>
-                            <p>Resultado: ${item.resultado || '-'}</p>
-                        </div>
-                    </ui-card>
+                    ${this.cardExamenDtoList.map(item => html`
+                        <ui-card>
+                            <div slot="content" class="tarjeta-contenido" style="text-align: left;">
+                                
+                                <div>
+                                    <p class="tarjeta-etiqueta">Prueba de Admisión</p>
+                                    <h3 class="tarjeta-titulo">${item.nombrePrueba || '-'}</h3>
+                                    <hr class="tarjeta-separador">
+                                </div>
+
+                                <div class="tarjeta-seccion">
+                                    <div class="tarjeta-fechas">
+                                        <div class="fecha-item">
+                                            <p class="tarjeta-subtitulo">Fecha de realización</p>
+                                            <p class="tarjeta-texto">${this._formatDate(item.fechaRealizacion) || '-'}</p>
+                                        </div>
+                                        <div class="fecha-item">
+                                            <p class="tarjeta-subtitulo">Resultado</p>
+                                            <p class="tarjeta-texto">${item.resultado || '-'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </ui-card>
+                    `)}
                 </div>
-            `) : html`
+            ` : html`
                 <p>No se encontraron resultados correspondientes</p>
             `}
         `;
@@ -74,6 +91,7 @@ class FrmResultados extends HTMLElement {
     _template(){
         return html`
             <link rel="stylesheet" href="./estilos/elementos_simples.css">
+            <notificacion-toast></notificacion-toast>
             <div>
                 <form @submit=${(e) => this.handleSubmit(e)}>
                     ${this.currentStep === 1 ? this._templateSearchExam() : this._templateExamResults()}
@@ -131,6 +149,12 @@ class FrmResultados extends HTMLElement {
         let correo; 
         correo = this.root.querySelector('input[name="correo"]').value;
         console.log(correo);
+        if (!correo) {
+            window.dispatchEvent(new CustomEvent('lanzar-notificacion', {
+                detail: { mensaje: 'Por favor, ingresa un correo electrónico para buscar los resultados.', tipo: 'error' }
+            }));
+            return;
+        }
         this.examenDAO.findByCorreo(correo)
             .then(resultados => {
                 console.log(resultados);
@@ -146,7 +170,9 @@ class FrmResultados extends HTMLElement {
                     return;
                 }
                 console.error('Error al buscar resultados:', error);
-                alert('Ocurrió un error al buscar los resultados. Por favor, inténtalo de nuevo más tarde.');
+                window.dispatchEvent(new CustomEvent('lanzar-notificacion', {
+                    detail: { mensaje: 'Ocurrió un error al buscar los resultados. Por favor, inténtalo de nuevo más tarde.', tipo: 'error' }
+                }));
             });
         
     }

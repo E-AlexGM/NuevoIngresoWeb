@@ -6,6 +6,7 @@
     align-items: start;
     font-family: Arial, system-ui, sans-serif;
     margin-top: 1.5rem;
+    grid-auto-rows: 1fr;
 }
 
 .tarjeta-contenido {
@@ -175,4 +176,9 @@
     font-size: 0.85rem;
     font-style: italic;
     margin: 0;
+}
+
+ui-card {
+    display: block;
+    height: 100%;
 }
