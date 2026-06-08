@@ -10,10 +10,9 @@ import VistaPruebaClaveArea from './prueba_clave_area.js';
 import SearchNav from './componentes/search_nav.js';
 import AulaDto from "./dto/aula_dto.js";
 
-
-class FrmProcesos extends HTMLElement{
+class FrmProcesos extends HTMLElement {
     
-    constructor(){
+    constructor() {
         super();
         this.root = this.attachShadow({mode: 'open'});
         this.pruebasList = [];
@@ -24,48 +23,131 @@ class FrmProcesos extends HTMLElement{
         this.totalSteps = 2;
         this.errorCargaDatos = false;
         this.filtroBusqueda = '';
+        this._isUpdatePending = false; // Bandera para agrupar renders (Loteo)
     }
 
-    connectedCallback(){
+    connectedCallback() {
         this.container = document.createElement('div');
         this.root.appendChild(this.container);
         this._loadData();   
     }
 
-    _nextStep() {
-        if(this.currentStep < this.totalSteps) {
-            this.currentStep++;
+    /**
+     * Planifica el renderizado en la siguiente microtarea.
+     * Evita la "tormenta de renders" si se llama consecutivamente de forma síncrona.
+     */
+    _requestUpdate() {
+        if (this._isUpdatePending) return;
+        this._isUpdatePending = true;
+        
+        Promise.resolve().then(() => {
             this._draw();
+            this._isUpdatePending = false;
+        });
+    }
+
+    _nextStep() {
+        if (this.currentStep < this.totalSteps) {
+            this.currentStep++;
+            this._requestUpdate();
         }
     }
 
     _prevStep() {
-        if(this.currentStep > 1) {
+        if (this.currentStep > 1) {
             this.currentStep--;
-            this._draw();
+            this._requestUpdate();
         }
     }
 
-    _draw(){
-        if(this.container !== undefined){
+    _draw() {
+        if (this.container !== undefined) {
             render(this._template(), this.container);
         }
     }
 
-    _templateDetalles(){
+    _handleSearch(e) {
+        this.filtroBusqueda = e.detail.term;
+        this._requestUpdate(); 
+    }
+
+    _selectPrueba(idPrueba) {
+        this.idPruebaSeleccionada = idPrueba;
+        this._nextStep();
+    }
+
+    _loadData() {
+        this.errorCargaDatos = false;
+        this._requestUpdate(); 
+        this.pruebaDao.list(true)
+            .then(resultados => {
+                const pruebasRaw = resultados.datos || [];
+                const promesasPruebas = pruebasRaw.map(pruebaDto => {
+                    if (!pruebaDto || !pruebaDto.idPrueba) return Promise.resolve(null);
+
+                    const prueba = Object.assign(new Prueba(), pruebaDto);
+                    const pruebaJornadaDao = new PruebaJornadaDAO(prueba.idPrueba);
+                    return pruebaJornadaDao.findRange(0, 50)
+                        .then(jornadaResultados => {
+                            const jornadasRaw = jornadaResultados.datos || [];
+
+                            const promesasJornadas = jornadasRaw.map(jornadaDto => {
+                                if (!jornadaDto || !jornadaDto.idJornada) return Promise.resolve(null);
+
+                                const jornada = Object.assign(new Jornada(), jornadaDto);
+                                const jornadaAulaDao = new JornadaAulaDAO(jornada.idJornada);
+
+                                return jornadaAulaDao.findRange(0, 50)
+                                    .then(aulaResultados => {
+                                        jornada.aulas = (aulaResultados.datos || [])
+                                            .map(aulaDto => aulaDto && aulaDto.idAula ? Object.assign(new AulaDto(), aulaDto) : null)
+                                            .filter(Boolean);
+                                        return jornada;
+                                    })
+                                    .catch(error => {
+                                        console.error(`Error cargando aulas para jornada ${jornada.idJornada}:`, error);
+                                        jornada.aulas = [];
+                                        return jornada;
+                                    });
+                            });
+                            // Resolvemos todas las jornadas de la prueba en paralelo
+                            return Promise.all(promesasJornadas).then(jornadas => {
+                                prueba.jornadas = jornadas.filter(Boolean);
+                                return prueba;
+                            });
+                        })
+                        .catch(error => {
+                            console.error(`Error cargando jornadas para prueba ${prueba.idPrueba}:`, error);
+                            prueba.jornadas = [];
+                            return prueba;
+                        });
+                });
+
+                return Promise.all(promesasPruebas);
+            })
+            .then(pruebas => {
+                this.pruebasList = pruebas.filter(Boolean);
+                this._requestUpdate();
+            })
+            .catch(error => {
+                console.error('Error crítico al cargar la estructura de datos:', error);
+                this.errorCargaDatos = true;
+                this._requestUpdate();
+            });
+    }
+
+    _templateDetalles() {
         return html `
             <link rel="stylesheet" href="./estilos/elementos_simples.css">
             <div>
                 <prueba-clave-area .idPrueba="${this.idPruebaSeleccionada}">
                 </prueba-clave-area>
             </div>
-            <button type="button"  class="btn btn-primario" @click=${() => this._prevStep()}>Anterior</button>
-
+            <button type="button" class="btn btn-primario" @click=${() => this._prevStep()}>Anterior</button>
         `;
     }
 
-
-_templateProcesos() {
+    _templateProcesos() {
         const pruebasFiltradas = this.pruebasList.filter(prueba => {
             if (!this.filtroBusqueda) return true;
             const termino = this.filtroBusqueda.toLowerCase();
@@ -165,15 +247,10 @@ _templateProcesos() {
         `;
     }
 
-    /**
-     * Convierte una cadena ISO a un formato legible en español
-     */
     _formatDate(isoString) {
         if (!isoString) return 'Sin fecha';
         
         const date = new Date(isoString);
-        
-        // Verificamos si la fecha es válida, si no lo es, devolvemos el string original
         if (isNaN(date.getTime())) return isoString;
 
         return new Intl.DateTimeFormat('es-SV', {
@@ -186,12 +263,7 @@ _templateProcesos() {
         }).format(date);
     }
 
-    _handleSearch(e) {
-        this.filtroBusqueda = e.detail.term;
-        this._draw(); 
-    }
-
-    _template(){
+    _template() {
         if (this.errorCargaDatos) {       
             return html`
                 <link rel="stylesheet" href="./estilos/componentes/error_pantalla.css">
@@ -207,134 +279,6 @@ _templateProcesos() {
         `;       
     }
 
-
-    /**
-     * Carga las pruebas cuyo estado activo es true 
-     * Carga también las aulas asociadas a cada jornada y renderiza las tarjetas 
-     * Carga además las jornadas asociada a cada prueba
-     * Dispara el dibujo
-     */
-    _loadData() {
-
-    this.errorCargaDatos = false;
-
-    this.pruebaDao.list(true)
-        .then(resultados => {
-            this.pruebasList = (resultados.datos || [])
-                .map(pruebaDto => {
-                    if (!pruebaDto || !pruebaDto.idPrueba) {
-                        return null;
-                    }
-                    return Object.assign(
-                        new Prueba(),
-                        pruebaDto
-                    );
-                })
-                .filter(prueba => prueba !== null);
-
-            this._draw();
-            return Promise.all(
-                this.pruebasList.map(prueba => {
-                    const pruebaJornadaDao =
-                        new PruebaJornadaDAO(prueba.idPrueba);
-                    return pruebaJornadaDao.findRange(0, 50)
-                        .then(jornadaResultados => {
-
-                            prueba.jornadas = (jornadaResultados.datos || [])
-                                .map(jornadaDto => {
-
-                                    if (!jornadaDto || !jornadaDto.idJornada) {
-                                        return null;
-                                    }
-                                    return Object.assign(
-                                        new Jornada(),
-                                        jornadaDto
-                                    );
-
-                                })
-                                .filter(jornada => jornada !== null);
-                            this._draw();
-                            return Promise.all(
-                                prueba.jornadas.map(jornada => {
-                                    const jornadaAulaDao =
-                                        new JornadaAulaDAO(jornada.idJornada);
-
-                                    return jornadaAulaDao.findRange(0, 50)
-                                        .then(aulaResultados => {
-                                            console.log(
-                                                'Aulas de jornada:',
-                                                jornada.idJornada,
-                                                aulaResultados
-                                            );
-                                            jornada.aulas = (aulaResultados.datos || [])
-                                                .map(aulaDto => {
-
-                                                    if (!aulaDto || !aulaDto.idAula) {
-                                                        return null;
-                                                    }
-                                                    return Object.assign(
-                                                        new AulaDto(),
-                                                        aulaDto
-                                                    );
-                                                })
-                                                .filter(aula => aula !== null);
-                                            console.log(
-                                                'Aulas cargadas:',
-                                                jornada.aulas
-                                            );
-                                            this._draw();
-                                            return jornada.aulas;
-                                        })
-                                        .catch(error => {
-                                            console.error(
-                                                'Error cargando aulas:',
-                                                error
-                                            );
-                                            jornada.aulas = [];
-                                            this._draw();
-                                            return [];
-                                        });
-                                })
-                            );
-                        })
-                        .catch(error => {
-                            console.error(
-                                'Error cargando jornadas:',
-                                error
-                            );
-                            prueba.jornadas = [];
-                            this._draw();
-                            return [];
-                        });
-
-                })
-
-            );
-
-        })
-        .catch(error => {
-            console.error(
-                'Error cargando datos:',
-                error
-            );
-            this.errorCargaDatos = true;
-            this._draw();
-        });
-
-}
-
-    /**
-     * Asigna a la variable global el idPrueba seleccionada
-     * Avanza un paso, lo que renderiza al template del 
-     */
-    _selectPrueba(idPrueba){
-        this.idPruebaSeleccionada = idPrueba;
-        this._nextStep();
-    }
-
-    /**
-     * Aplana las pruebas y sus jornadas para ordenarlas cronológicamente
-     */
     _getTarjetasOrdenadas(pruebas) {
         const tarjetas = [];
 
@@ -362,7 +306,7 @@ _templateProcesos() {
 
         return tarjetas;
     }
-   
 }
+
 customElements.define('frm-procesos', FrmProcesos);
 export default FrmProcesos;
