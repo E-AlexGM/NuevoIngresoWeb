@@ -20,6 +20,23 @@ suite("PruebaDAO Unit Test", function () {
         }
     });
 
+
+    suite("list()", function () {
+            test("Debe delegar la llamada a _list con el parámetro recibido", function () {
+                const mockPromise = Promise.resolve("datos_list");
+                stubFetch = sinon.stub(cut, "list").returns(mockPromise);
+
+                const activoParam = true;
+
+                const resultado = cut.list(activoParam);
+
+                chai.assert.equal(resultado, mockPromise);
+                chai.assert.isTrue(stubFetch.calledOnce);
+                chai.assert.isTrue(stubFetch.calledWithExactly(activoParam));
+            });
+        });
+    
+
     suite("findRange()", function () {
         test("Debe delegar la llamada a _findRange con los parámetros recibidos", function () {
             const mockPromise = Promise.resolve("datos_findRange");
