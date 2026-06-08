@@ -180,10 +180,10 @@ class VistaRegistroAspirante extends HTMLElement {
         if (this.errorCargaDatos) {
             return html`
                 <link rel="stylesheet" href="./estilos/componentes/error_pantalla.css">
-                <div class="mensaje-error-pantalla">
-                    <div class="icono-error">⚠️</div>
-                    <h3>Ocurrió un problema</h3>
-                    <p>No pudimos cargar la información necesaria en este momento. Por favor, comprueba tu conexión o inténtalo más tarde.</p>
+                <div class="mensaje-error-pantalla" id="mensajeErrorPantalla">
+                    <div class="icono-error" id="iconoErrorCarga">⚠️</div>
+                    <h3 id="tituloErrorCarga">Ocurrió un problema</h3>
+                    <p id="descErrorCarga">No pudimos cargar la información necesaria en este momento. Por favor, comprueba tu conexión o inténtalo más tarde.</p>
                 </div>
             `;
         }
@@ -194,31 +194,33 @@ class VistaRegistroAspirante extends HTMLElement {
             <div class="registro-wrapper" id="contenedorRegistro">
 
                 ${this.errorMensaje === 'DUPLICADO' ? html`
-                    <div class="alerta-error">
+                    <div class="alerta-error" id="alertaErrorDuplicado">
                         <strong>¡Atención!</strong> Ya existe un aspirante registrado con este correo.<br><br>
-                        ¿Olvidaste tus credenciales? <a href="#">RECUPERA TU CUENTA AQUÍ</a>
+                        ¿Olvidaste tus credenciales? <a href="#" id="enlaceRecuperarDuplicado">RECUPERA TU CUENTA AQUÍ</a>
                     </div>
-                ` : this.errorMensaje ? html`<div class="alerta-error">${this.errorMensaje}</div>` : ''}
+                ` : this.errorMensaje ? html`<div class="alerta-error" id="alertaErrorMensaje">${this.errorMensaje}</div>` : ''}
 
-                <form @submit=${(e) => this.registrar(e)} class="formulario-grid">
+                <form @submit=${(e) => this.registrar(e)} class="formulario-grid" id="formularioRegistro">
                     
-                    <div class="columna-izquierda">
+                    <div class="columna-izquierda" id="columnaDatosPersonales">
                         <form-datos-personales 
+                            id="formDatosPersonalesComponente"
                             .datos=${this.datos} 
                             @datos-actualizados=${(e) => this.actualizarDatosPersonales(e)}>
                         </form-datos-personales>
                     </div>
 
-                    <div class="columna-derecha">
+                    <div class="columna-derecha" id="columnaSeleccionCarreras">
                         <form-seleccion-carreras 
+                            id="formSeleccionCarrerasComponente"
                             .catalogo=${this.catalogoCarreras}
                             @carreras-actualizadas=${(e) => this.actualizarCarreras(e)}>
                         </form-seleccion-carreras>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn-registrar">REGISTRARME COMO ASPIRANTE</button>
-                        <p class="login-link">¿Ya tienes una cuenta? <a href="#">¡Inicia sesión o RECUPERA TU CUENTA AQUÍ!</a></p>
+                    <div class="form-actions" id="accionesFormulario">
+                        <button type="submit" class="btn-registrar" id="btnRegistrarAspirante">REGISTRARME COMO ASPIRANTE</button>
+                        <p class="login-link" id="textoLoginLink">¿Ya tienes una cuenta? <a href="#" id="enlaceRecuperarCuenta">¡Inicia sesión o RECUPERA TU CUENTA AQUÍ!</a></p>
                     </div>
 
                 </form>

@@ -103,27 +103,27 @@ class ArbolColapsable extends HTMLElement {
     const simboloIcono = tieneHijos ? '▶' : '•';
 
     return html`
-        <div class="nodo">
-            <details ?open=${!nodo.esHoja}>
-                <summary class="nodo-fila">
+        <div class="nodo" id="nodoContainer-${nodo.idArea}">
+            <details ?open=${!nodo.esHoja} id="detailsNodo-${nodo.idArea}">
+                <summary class="nodo-fila" id="summaryNodo-${nodo.idArea}">
                     <div class="nodo-identificador">
                         <div class="nodo-icono nivel-${nivel}">${simboloIcono}</div>
                         
                         <div class="nodo-texto">
-                            <span class="nodo-nombre">${nodo.nombre}</span>
-                            ${nodo.descripcion ? html`<p class="nodo-descripcion">${nodo.descripcion}</p>` : ''}
+                            <span class="nodo-nombre" id="nombreNodo-${nodo.idArea}">${nodo.nombre}</span>
+                            ${nodo.descripcion ? html`<p class="nodo-descripcion" id="descripcionNodo-${nodo.idArea}">${nodo.descripcion}</p>` : ''}
                         </div>
                     </div>
                     
                     ${nodo.esHoja ? html`
                         <div class="nodo-metas">
-                            <span class="badge-preguntas">${nodo.cantidad} ítems | ${nodo.porcentaje}%</span>
+                            <span class="badge-preguntas" id="badgeNodo-${nodo.idArea}">${nodo.cantidad} ítems | ${nodo.porcentaje}%</span>
                         </div>
                     ` : ''}
                 </summary>
                 
                 ${tieneHijos ? html`
-                    <div class="nodo-hijos">
+                    <div class="nodo-hijos" id="hijosNodo-${nodo.idArea}">
                         ${nodo.hijos.map(hijo => this._renderizarRama(hijo, nivel + 1))}
                     </div>
                 ` : ''}
@@ -135,18 +135,18 @@ class ArbolColapsable extends HTMLElement {
 _template() {
     return html`
         <link rel="stylesheet" href="./estilos/componentes/arbol_colapsable.css">
-        <div class="arbol-contenedor">
+        <div class="arbol-contenedor" id="arbolContenedor">
             ${this.titulo ? html`
-                <div class="arbol-titulo">
+                <div class="arbol-titulo" id="arbolTitulo">
                     <span>Áreas de conocimiento</span>
                     <strong>${this.titulo}</strong>
                 </div>
             ` : ''}
             
-            <div class="arbol-lista">
+            <div class="arbol-lista" id="arbolLista">
                 ${this._arbolProcesado && this._arbolProcesado.length > 0 
                     ? this._arbolProcesado.map(nodo => this._renderizarRama(nodo, 0))
-                    : html`<div class="arbol-vacio">No hay áreas de conocimiento asignadas.</div>`
+                    : html`<div class="arbol-vacio" id="arbolVacio">No hay áreas de conocimiento asignadas.</div>`
                 }
             </div>
         </div>

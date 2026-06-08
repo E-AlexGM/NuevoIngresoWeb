@@ -55,11 +55,11 @@ class FrmResultados extends HTMLElement {
                 <div class="grid-tarjetas">              
                     ${this.cardExamenDtoList.map(item => html`
                         <ui-card>
-                            <div slot="content" class="tarjeta-contenido" style="text-align: left;">
+                            <div id="datosResultado" slot="content" class="tarjeta-contenido" style="text-align: left;">
                                 
                                 <div>
                                     <p class="tarjeta-etiqueta">Prueba de Admisión</p>
-                                    <h3 class="tarjeta-titulo">${item.nombrePrueba || '-'}</h3>
+                                    <h3 id="tituloResultado" class="tarjeta-titulo">${item.nombrePrueba || '-'}</h3>
                                     <hr class="tarjeta-separador">
                                 </div>
 
@@ -81,7 +81,7 @@ class FrmResultados extends HTMLElement {
                     `)}
                 </div>
             ` : html`
-                 <p class="mensaje-sin-resultados">No se encontraron resultados correspondientes</p>
+                 <p id="mensajeError" class="mensaje-sin-resultados">No se encontraron resultados correspondientes</p>
             `}
         `;
     }
@@ -97,10 +97,10 @@ class FrmResultados extends HTMLElement {
                     ${this.currentStep === 1 ? this._templateSearchExam() : this._templateExamResults()}
                     <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                         ${this.currentStep > 1 
-                            ? html`<button type="button" class="btn btn-secundario" @click=${() => this.prevStep()}><span>←</span> Anterior</button>` 
+                            ? html`<button id="btnAnterior" type="button" class="btn btn-secundario" @click=${() => this.prevStep()}><span>←</span> Anterior</button>` 
                             : ''}
                         ${this.currentStep < this.totalSteps 
-                            ? html`<button type="submit" class="btn btn-primario">Buscar</button>` 
+                            ? html`<button id="btnBuscar" type="submit" class="btn btn-primario">Buscar</button>` 
                             : ''}
                     </div>
 
@@ -142,8 +142,7 @@ class FrmResultados extends HTMLElement {
      * @param {e} e 
      * Rellena el template de resultados con los datos obtenidos de la búsqueda. 
      * Si ocurre un error, muestra un mensaje de error al usuario.
-     * 
-     */
+     * */
     handleSubmit(e) { 
         e.preventDefault();
         let correo; 

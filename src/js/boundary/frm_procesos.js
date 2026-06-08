@@ -23,7 +23,7 @@ class FrmProcesos extends HTMLElement {
         this.totalSteps = 2;
         this.errorCargaDatos = false;
         this.filtroBusqueda = '';
-        this._isUpdatePending = false; // Bandera para agrupar renders (Loteo)
+        this._isUpdatePending = false; 
     }
 
     connectedCallback() {
@@ -32,10 +32,6 @@ class FrmProcesos extends HTMLElement {
         this._loadData();   
     }
 
-    /**
-     * Planifica el renderizado en la siguiente microtarea.
-     * Evita la "tormenta de renders" si se llama consecutivamente de forma síncrona.
-     */
     _requestUpdate() {
         if (this._isUpdatePending) return;
         this._isUpdatePending = true;
@@ -110,7 +106,6 @@ class FrmProcesos extends HTMLElement {
                                         return jornada;
                                     });
                             });
-                            // Resolvemos todas las jornadas de la prueba en paralelo
                             return Promise.all(promesasJornadas).then(jornadas => {
                                 prueba.jornadas = jornadas.filter(Boolean);
                                 return prueba;
@@ -140,10 +135,10 @@ class FrmProcesos extends HTMLElement {
         return html `
             <link rel="stylesheet" href="./estilos/elementos_simples.css">
             <div>
-                <prueba-clave-area .idPrueba="${this.idPruebaSeleccionada}">
+                <prueba-clave-area id="detallePrueba" .idPrueba="${this.idPruebaSeleccionada}">
                 </prueba-clave-area>
             </div>
-            <button type="button" class="btn btn-primario" @click=${() => this._prevStep()}>Anterior</button>
+            <button id="btnAnterior" type="button" class="btn btn-primario" @click=${() => this._prevStep()}>Anterior</button>
         `;
     }
 
@@ -161,15 +156,15 @@ class FrmProcesos extends HTMLElement {
         <link rel="stylesheet" href="./estilos/layout/admin.css">
         <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
 
-        <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
+        <search-nav id="searchNav" @search-change=${(e) => this._handleSearch(e)}></search-nav>
 
         <div class="grid-tarjetas">              
             ${tarjetasOrdenadas.length > 0 ? 
-                tarjetasOrdenadas.map(item => {
+                tarjetasOrdenadas.map((item, index) => {
                     if (item.estado === 'ok') {
                         return html`
                             <div class="r">
-                                <ui-card data-id="${item.prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
+                                <ui-card id="tarjetaPrueba-${index}" data-id="${item.prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
                                     <div slot="title vista-encabezado"></div>
                                     <div slot="content">
                                         <h3 class="tarjeta-etiqueta">
@@ -192,13 +187,13 @@ class FrmProcesos extends HTMLElement {
                                         <div class="tarjeta-seccion">
                                         ${item.jornada.aulas ? 
                                             (item.jornada.aulas.length > 0 ? html`
-                                                <details class="tarjeta-desplegable">
-                                                    <summary class="tarjeta-subtitulo interactivo" @click=${(e) => e.stopPropagation()}>
+                                                <details id="detalleSedes-${index}" class="tarjeta-desplegable">
+                                                    <summary id="btnDesplegableSedes-${index}" class="tarjeta-subtitulo interactivo" @click=${(e) => e.stopPropagation()}>
                                                         <span>Ver sedes disponibles</span>
                                                         <span class="icono-flecha">▼</span>
                                                     </summary>
                                                     <div class="desplegable-contenido">
-                                                        <ul class="tarjeta-lista">
+                                                        <ul id="listaSedes-${index}" class="tarjeta-lista">
                                                             ${item.jornada.aulas.map(aula => html`
                                                                ${aula.sede ? html `<li>Sede:<b>${aula.sede}</b></li>`: ''}
                                                             `)}
@@ -221,7 +216,7 @@ class FrmProcesos extends HTMLElement {
                     } else if (item.estado === 'vacio') {
                         return html`
                             <div class="r">
-                                <ui-card data-id="${item.prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
+                                <ui-card id="tarjetaPrueba-${index}" data-id="${item.prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
                                     <div slot="content">
                                         <h3 class="tarjeta-etiqueta">
                                             ${item.prueba.nombre || 'Sin nombre'}
@@ -242,7 +237,7 @@ class FrmProcesos extends HTMLElement {
                         return html`<p><em>Cargando jornadas de ${item.prueba.nombre}...</em></p>`;
                     }
                 })    
-            : html `<p class="mensaje-sin-pruebas">No se encontraron pruebas.</p>`}
+            : html `<p id="mensajeVacio" class="mensaje-sin-pruebas">No se encontraron pruebas.</p>`}
         </div>
         `;
     }

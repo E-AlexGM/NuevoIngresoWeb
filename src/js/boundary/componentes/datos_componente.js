@@ -1,4 +1,4 @@
-    import { html, render } from '../../lib/lit-html/lit-html.js';
+import { html, render } from '../../lib/lit-html/lit-html.js';
 
 class FormDatosPersonales extends HTMLElement {
     constructor() {
@@ -62,17 +62,17 @@ class FormDatosPersonales extends HTMLElement {
         return html`
             <link rel="stylesheet" href="./estilos/componentes/datos_componente.css">
 
-            <div class="tarjeta-seccion">
-                <div class="tarjeta-header">DATOS PERSONALES</div>
-                <div class="tarjeta-body grid-inputs">
-                    <input type="text" name="documentoIdentidad" .value=${this._datos.documentoIdentidad} class="form-input col-completa" placeholder="Documento de Identidad (DUI)" @input=${(e) => this.manejarInput(e)}>
+            <div class="tarjeta-seccion" id="tarjetaSeccionDatos">
+                <div class="tarjeta-header" id="tarjetaHeaderDatos">DATOS PERSONALES</div>
+                <div class="tarjeta-body grid-inputs" id="tarjetaBodyDatos">
+                    <input type="text" id="txtDocumentoIdentidad" name="documentoIdentidad" .value=${this._datos.documentoIdentidad} class="form-input col-completa" placeholder="Documento de Identidad (DUI)" @input=${(e) => this.manejarInput(e)}>
                     
-                    <input type="text" name="nombres" .value=${this._datos.nombres} class="form-input" placeholder="Nombres Completos" required @input=${(e) => this.manejarInput(e)}>
-                    <input type="text" name="apellidos" .value=${this._datos.apellidos} class="form-input" placeholder="Apellidos Completos" required @input=${(e) => this.manejarInput(e)}>
+                    <input type="text" id="txtNombres" name="nombres" .value=${this._datos.nombres} class="form-input" placeholder="Nombres Completos" required @input=${(e) => this.manejarInput(e)}>
+                    <input type="text" id="txtApellidos" name="apellidos" .value=${this._datos.apellidos} class="form-input" placeholder="Apellidos Completos" required @input=${(e) => this.manejarInput(e)}>
                     
-                    <input type="date" name="fechaNacimiento" max="${maxString}" .value=${this._datos.fechaNacimiento} class="form-input" required @input=${(e) => this.manejarInput(e)}>
+                    <input type="date" id="txtFechaNacimiento" name="fechaNacimiento" max="${maxString}" .value=${this._datos.fechaNacimiento} class="form-input" required @input=${(e) => this.manejarInput(e)}>
                     
-                    <input type="email" name="correo" .value=${this._datos.correo} class="form-input col-completa" placeholder="Correo Electrónico" required @input=${(e) => this.manejarInput(e)}>
+                    <input type="email" id="txtCorreo" name="correo" .value=${this._datos.correo} class="form-input col-completa" placeholder="Correo Electrónico" required @input=${(e) => this.manejarInput(e)}>
                 </div>
             </div>
         `;
