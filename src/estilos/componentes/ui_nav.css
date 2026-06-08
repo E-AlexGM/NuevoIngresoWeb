@@ -4,7 +4,7 @@
     gap: 2.25rem;
     padding: 0 0.5rem;
     height: 3.5rem;
-    border-bottom: 1px solid #e7e5e4; /* Línea divisoria sutil */
+    border-bottom: 1px solid #e7e5e4; 
     margin-bottom: 2rem;
     font-family: Arial, sans-serif;
 }
@@ -21,46 +21,67 @@
     transition: color 0.25s ease;
 }
 
-/* El indicador clásico de la barra de navegación (línea inferior) */
 .enlace-nav::after {
     content: '';
     position: absolute;
-    bottom: -1px; /* Se superpone exactamente al borde inferior del menú */
+    bottom: -1px; 
     left: 0;
     width: 100%;
     height: 3px;
-    background-color: #922b21; /* Tu color guinda institucional */
+    background-color: #922b21; 
     border-radius: 3px 3px 0 0;
     transform: scaleX(0);
     transition: transform 0.2s ease;
 }
 
-/* Efecto al pasar el cursor */
 .enlace-nav:hover {
     color: #1f2937;
 }
 
 .enlace-nav:hover::after {
-    transform: scaleX(1); /* Muestra la línea elegantemente */
+    transform: scaleX(1);
 }
 
-/* Estado activo (Página actual) */
 .enlace-nav.activo {
     color: #922b21;
     font-weight: 700;
 }
 
 .enlace-nav.activo::after {
-    transform: scaleX(1); /* Mantiene la línea fija */
+    transform: scaleX(1);
+}
+.btn-instalar {
+    display: inline-block;
+    background-color: #922b21;
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 62.5rem; /* Forma de píldora */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(146, 43, 33, 0.2);
 }
 
-/* Adaptación para pantallas pequeñas */
+.btn-instalar:hover {
+    background-color: #7c2d12;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px -1px rgba(146, 43, 33, 0.3);
+}
+
+.btn-instalar:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(146, 43, 33, 0.2);
+}
+
 @media (max-width: 35rem) {
     .menu-navegacion {
         gap: 1.5rem;
-        justify-content: center; /* Centrado clásico en móviles */
+        justify-content: center;
         height: auto;
         padding: 0.75rem 0;
+        flex-wrap: wrap; 
     }
     
     .enlace-nav {
@@ -69,5 +90,9 @@
     
     .enlace-nav::after {
         bottom: 0;
+    }
+
+    .btn-instalar {
+        margin-left: 0;
     }
 }
