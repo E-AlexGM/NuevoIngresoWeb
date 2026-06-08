@@ -23,6 +23,8 @@ const ARCHIVOS_CACHE = [
     '/estilos/componentes/selector_buscador.css',
     '/estilos/componentes/tarjeta_clave.css',
     '/estilos/componentes/ui_card.css',
+    '/estilos/componentes/ui_nav.css',
+    '/estilos/componentes/error_pantalla.css',
     '/estilos/index.css',
     '/estilos/componentes/grid_tarjetas.css',     
     '/estilos/elementos_simples.css',             
@@ -56,6 +58,8 @@ const ARCHIVOS_CACHE = [
     '/js/control/aspirante_dao.js',
     '/js/control/carrera_dao.js',
     '/js/control/aspirante_opcion_dao.js',
+    '/js/control/jornada_aula_dao.js',
+
 
     '/js/entity/default_error.js',
     '/js/entity/default_response.js',

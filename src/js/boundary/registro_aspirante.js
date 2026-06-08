@@ -179,7 +179,7 @@ class VistaRegistroAspirante extends HTMLElement {
     _template() {
         if (this.errorCargaDatos) {
             return html`
-                <link rel="stylesheet" href="./estilos/componentes/registro_aspirante.css">
+                <link rel="stylesheet" href="./estilos/componentes/error_pantalla.css">
                 <div class="mensaje-error-pantalla">
                     <div class="icono-error">⚠️</div>
                     <h3>Ocurrió un problema</h3>

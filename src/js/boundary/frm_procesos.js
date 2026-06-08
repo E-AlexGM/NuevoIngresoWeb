@@ -22,7 +22,7 @@ class FrmProcesos extends HTMLElement{
         this.idPruebaSeleccionada = null;
         this.currentStep = 1;
         this.totalSteps = 2;
-
+        this.errorCargaDatos = false;
         this.filtroBusqueda = '';
     }
 
@@ -78,7 +78,6 @@ _templateProcesos() {
         return html `
         <link rel="stylesheet" href="./estilos/layout/admin.css">
         <link rel="stylesheet" href="./estilos/componentes/grid_tarjetas.css">
-        <link rel="stylesheet" href="./estilos/componentes/prueba_clave_area.css">
 
         <search-nav @search-change=${(e) => this._handleSearch(e)}></search-nav>
 
@@ -193,6 +192,16 @@ _templateProcesos() {
     }
 
     _template(){
+        if (this.errorCargaDatos) {       
+            return html`
+                <link rel="stylesheet" href="./estilos/componentes/error_pantalla.css">
+                <div class="mensaje-error-pantalla">
+                    <div class="icono-error">⚠️</div>
+                    <h3>Ocurrió un problema</h3>
+                    <p>No pudimos cargar la información necesaria en este momento. Por favor, comprueba tu conexión o inténtalo más tarde.</p>
+                </div>
+            `;
+        }
         return html `
            ${this.currentStep === 1 ? this._templateProcesos() : this._templateDetalles()}
         `;       
@@ -249,7 +258,11 @@ _templateProcesos() {
                     })
                 ); 
             })
-            .catch(error => console.error("Error cargando datos:", error));
+            .catch(error => {
+                this.errorCargaDatos = true;  
+                console.error("Error cargando datos:", error);
+                this._draw();                
+            });
             
     }
 

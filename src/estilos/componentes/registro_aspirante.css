@@ -108,41 +108,6 @@
     text-decoration: underline;
 }
 
-.mensaje-error-pantalla {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 4rem 2rem;
-    background-color: #fef2f2;
-    border: 2px dashed #fca5a5;
-    border-radius: 1rem;
-    margin-top: 2rem;
-    color: #450a0a;
-    font-family: Arial, sans-serif;
-}
-
-.mensaje-error-pantalla .icono-error {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-}
-
-.mensaje-error-pantalla h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #991b1b;
-}
-
-.mensaje-error-pantalla p {
-    margin: 0 0 1.5rem 0;
-    color: #7f1d1d;
-    font-size: 1rem;
-    line-height: 1.5;
-    max-width: 400px;
-}
-
 @media (max-width: 53.75rem) {
     .registro-wrapper {
         padding: 1rem;
