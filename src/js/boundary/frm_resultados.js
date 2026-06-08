@@ -81,7 +81,7 @@ class FrmResultados extends HTMLElement {
                     `)}
                 </div>
             ` : html`
-                <p>No se encontraron resultados correspondientes</p>
+                 <p class="mensaje-sin-resultados">No se encontraron resultados correspondientes</p>
             `}
         `;
     }

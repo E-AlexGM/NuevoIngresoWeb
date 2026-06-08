@@ -160,7 +160,7 @@ _templateProcesos() {
                         return html`<p><em>Cargando jornadas de ${item.prueba.nombre}...</em></p>`;
                     }
                 })    
-            : html `<p>No se encontraron pruebas.</p>`}
+            : html `<p class="mensaje-sin-pruebas">No se encontraron pruebas.</p>`}
         </div>
         `;
     }
