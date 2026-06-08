@@ -139,7 +139,7 @@ describe("PruebaDAO Integration Tests - Online", function () {
       };
 
       cut
-        .list(false)
+        .list(true) 
         .then(() => {
           Response.prototype.json = originalJson;
           done(new Error("La consulta debería haber fallado por JSON corrupto"));
@@ -149,7 +149,9 @@ describe("PruebaDAO Integration Tests - Online", function () {
 
           try {
             chai.expect(error).to.have.property("mensaje");
-            chai.expect(error.mensaje).to.include("Error al parsear los datos: Simulado: JSON corrupto");
+            chai
+              .expect(error.mensaje)
+              .to.include("Error al parsear los datos: Simulado: JSON corrupto");
             done();
           } catch (assertError) {
             done(assertError);

@@ -2,6 +2,8 @@ import * as chai from "../../lib/chai/index.js";
 import sinon from "../../lib/sinon/sinon-esm.js";
 import PruebaDAO from "../../../../src/js/control/prueba_dao.js";
 import Prueba from "../../../../src/js/entity/prueba.js";
+import DefaultResponse from "../../../../src/js/entity/default_response.js";
+import DefaultError from "../../../../src/js/entity/default_error.js";
 
 mocha.setup("tdd");
 
@@ -22,19 +24,80 @@ suite("PruebaDAO Unit Test", function () {
 
 
     suite("list()", function () {
-            test("Debe delegar la llamada a _list con el parámetro recibido", function () {
-                const mockPromise = Promise.resolve("datos_list");
-                stubFetch = sinon.stub(cut, "list").returns(mockPromise);
-
-                const activoParam = true;
-
-                const resultado = cut.list(activoParam);
-
-                chai.assert.equal(resultado, mockPromise);
-                chai.assert.isTrue(stubFetch.calledOnce);
-                chai.assert.isTrue(stubFetch.calledWithExactly(activoParam));
+        test("Debe retornar DefaultResponse con un array de pruebas (200 OK)", function (done) {
+            const mockDatos = [{ idPrueba: "1", nombre: "Examen Admisión" }];
+            const mockResponse = new Response(JSON.stringify(mockDatos), {
+                status: 200,
+                headers: { "Content-Type": "application/json" }
             });
+            
+            // Hacemos stub al fetch global de la ventana del navegador
+            stubFetch = sinon.stub(window, "fetch").resolves(mockResponse);
+
+            const activoParam = true;
+
+            cut.list(activoParam)
+                .then((response) => {
+                    chai.assert.instanceOf(response, DefaultResponse);
+                    chai.assert.deepEqual(response.datos, mockDatos);
+                    
+                    // Verificamos que construyó la URL correctamente usando el parámetro 'activo'
+                    chai.assert.isTrue(stubFetch.calledOnce);
+                    chai.assert.isTrue(
+                        stubFetch.calledWithMatch(sinon.match(/\?activo=true$/), {
+                            method: "GET"
+                        })
+                    );
+                    done();
+                })
+                .catch(done);
         });
+
+        test("Debe rechazar con DefaultError cuando el estatus no es 200 (ej. 404)", function (done) {
+            const mockResponse = new Response(null, { status: 404 });
+            stubFetch = sinon.stub(window, "fetch").resolves(mockResponse);
+
+            cut.list(false)
+                .then(() => done(new Error("Se esperaba un rechazo del método")))
+                .catch((error) => {
+                    chai.assert.instanceOf(error, DefaultError);
+                    chai.assert.equal(error.mensaje, "Error al obtener los datos: 404");
+                    done();
+                });
+        });
+
+        test("Debe rechazar con DefaultError cuando falla el parseo del JSON", function (done) {
+            const mockResponse = {
+                status: 200,
+                json() {
+                    return Promise.reject(new Error("JSON inválido"));
+                }
+            };
+            stubFetch = sinon.stub(window, "fetch").resolves(mockResponse);
+
+            cut.list(true)
+                .then(() => done(new Error("Se esperaba un rechazo por JSON corrupto")))
+                .catch((error) => {
+                    chai.assert.instanceOf(error, DefaultError);
+                    chai.assert.include(error.mensaje, "Error al parsear los datos: JSON inválido");
+                    done();
+                });
+        });
+
+        test("Debe rechazar con DefaultError cuando fetch falla por un Error de Red", function (done) {
+            const networkError = new Error("Failed to fetch");
+            stubFetch = sinon.stub(window, "fetch").rejects(networkError);
+
+            cut.list(true)
+                .then(() => done(new Error("Se esperaba un rechazo por error de red")))
+                .catch((error) => {
+                    chai.assert.instanceOf(error, DefaultError);
+                    chai.assert.equal(error.mensaje, "Error al acceder al repositorio");
+                    chai.assert.equal(error.error, networkError);
+                    done();
+                });
+        });
+    });
     
 
     suite("findRange()", function () {
