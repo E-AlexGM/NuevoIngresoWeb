@@ -54,6 +54,7 @@ class FrmProcesos extends HTMLElement{
 
     _templateDetalles(){
         return html `
+            <link rel="stylesheet" href="./estilos/elementos_simples.css">
             <div>
                 <prueba-clave-area .idPrueba="${this.idPruebaSeleccionada}">
                 </prueba-clave-area>
@@ -139,14 +140,19 @@ _templateProcesos() {
                     } else if (item.estado === 'vacio') {
                         return html`
                             <div class="r">
-                                <ui-card @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
+                                <ui-card data-id="${item.prueba.idPrueba}" class="tarjeta-contenido" @click=${() => this._selectPrueba(item.prueba.idPrueba)}>
                                     <div slot="content">
-                                        <h3>${item.prueba.nombre || 'Sin nombre'}</h3>
-                                        <p><b>Estado:</b> ${item.prueba.activo ? 'Activa' : 'Inactiva'}</p>
-                                        <p><em>Esta prueba aún no tiene jornadas asignadas.</em></p>
-                                    </div>
-                                    <div slot="action">
-                                        <button>Ver detalles</button>
+                                        <h3 class="tarjeta-etiqueta">
+                                            ${item.prueba.nombre || 'Sin nombre'}
+                                        </h3>
+                                        <p class="tarjeta-subtitulo">                     
+                                            ${item.prueba.idTipoPrueba && item.prueba.idTipoPrueba.valor ? item.prueba.idTipoPrueba.valor : 'Prueba'}
+                                        </p>
+                                        <hr class="tarjeta-separador">
+                                        
+                                        <div class="tarjeta-seccion" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 8rem; text-align: center;">
+                                            <p class="tarjeta-vacio">Esta prueba aún no tiene jornadas asignadas.</p>
+                                        </div>
                                     </div>
                                 </ui-card>
                             </div>

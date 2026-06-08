@@ -74,14 +74,18 @@ class FrmResultados extends HTMLElement {
     _template(){
         return html`
             <link rel="stylesheet" href="./estilos/elementos_simples.css">
-
             <div>
                 <form @submit=${(e) => this.handleSubmit(e)}>
-                        ${this.currentStep === 1 ? this._templateSearchExam() : this._templateExamResults()}
-                        ${this.currentStep > 1 ? html`<button type="button"  class="btn btn-primario" @click=${() => this.prevStep()}>Anterior</button>` : ''}
-                        ${this.currentStep < this.totalSteps ? html`<button type="submit">Buscar</button>` : ''}
-                      
+                    ${this.currentStep === 1 ? this._templateSearchExam() : this._templateExamResults()}
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        ${this.currentStep > 1 
+                            ? html`<button type="button" class="btn btn-secundario" @click=${() => this.prevStep()}><span>←</span> Anterior</button>` 
+                            : ''}
+                        ${this.currentStep < this.totalSteps 
+                            ? html`<button type="submit" class="btn btn-primario">Buscar</button>` 
+                            : ''}
                     </div>
+
                 </form>
            </div>
         `;
