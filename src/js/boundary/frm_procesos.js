@@ -214,57 +214,114 @@ _templateProcesos() {
      * Carga además las jornadas asociada a cada prueba
      * Dispara el dibujo
      */
-    _loadData(){
-        this.pruebaDao.list(true)
-            .then(resultados =>{
-                this.pruebasList = resultados.datos.map(pruebaDto => {
+    _loadData() {
 
-                    if(!pruebaDto || !pruebaDto.idPrueba) return null;
-                    return Object.assign(new Prueba(), pruebaDto);
-                }).filter(prueba => prueba !== null);
-                this._draw();
-                return Promise.all(
-                    this.pruebasList.map(prueba => {
-                        this.pruebaJornadaDao = new PruebaJornadaDAO(prueba.idPrueba);
-                        this.pruebaJornadaDao.findRange(0, 50)
-                            .then(jornadaResultados => {
-                                prueba.jornadas = jornadaResultados.datos.map(jornadaDto => {
-                                    if (!jornadaDto || !jornadaDto.idJornada) return null;
-                                    return Object.assign(new Jornada(), jornadaDto);
-                                }).filter(jornada => jornada !== null);
-                                this._draw();
-                                return Promise.all(
-                                    prueba.jornadas.map(jornada => {
-                                        
-                                        this.jornadaAulaDao = new JornadaAulaDAO(jornada.idJornada);
-                                        jornada.aulas = this.jornadaAulaDao.findRange(0, 50)
-                                            .then(aulaResultados => {
-                                                jornada.aulas = aulaResultados.datos.map(aulaDto => {
-                                    
-                                                    if(!aulaDto || !aulaDto.idAula) return null;
+    this.errorCargaDatos = false;
 
-                                                    return Object.assign(new AulaDto(), aulaDto);
+    this.pruebaDao.list(true)
+        .then(resultados => {
+            this.pruebasList = (resultados.datos || [])
+                .map(pruebaDto => {
+                    if (!pruebaDto || !pruebaDto.idPrueba) {
+                        return null;
+                    }
+                    return Object.assign(
+                        new Prueba(),
+                        pruebaDto
+                    );
+                })
+                .filter(prueba => prueba !== null);
 
-                                                    
-                                                }).filter(aula => aula !== null);
-                                                console.log(jornada.aulas)
-                                                this._draw();
-                                            });
-                                       return jornada;
-                                    })
-                                );
-                                 
-                            });
-                    })
-                ); 
-            })
-            .catch(error => {
-                this.errorCargaDatos = true;  
-                console.error("Error cargando datos:", error);
-                this._draw();                
-            });
-            
-    }
+            this._draw();
+            return Promise.all(
+                this.pruebasList.map(prueba => {
+                    const pruebaJornadaDao =
+                        new PruebaJornadaDAO(prueba.idPrueba);
+                    return pruebaJornadaDao.findRange(0, 50)
+                        .then(jornadaResultados => {
+
+                            prueba.jornadas = (jornadaResultados.datos || [])
+                                .map(jornadaDto => {
+
+                                    if (!jornadaDto || !jornadaDto.idJornada) {
+                                        return null;
+                                    }
+                                    return Object.assign(
+                                        new Jornada(),
+                                        jornadaDto
+                                    );
+
+                                })
+                                .filter(jornada => jornada !== null);
+                            this._draw();
+                            return Promise.all(
+                                prueba.jornadas.map(jornada => {
+                                    const jornadaAulaDao =
+                                        new JornadaAulaDAO(jornada.idJornada);
+
+                                    return jornadaAulaDao.findRange(0, 50)
+                                        .then(aulaResultados => {
+                                            console.log(
+                                                'Aulas de jornada:',
+                                                jornada.idJornada,
+                                                aulaResultados
+                                            );
+                                            jornada.aulas = (aulaResultados.datos || [])
+                                                .map(aulaDto => {
+
+                                                    if (!aulaDto || !aulaDto.idAula) {
+                                                        return null;
+                                                    }
+                                                    return Object.assign(
+                                                        new AulaDto(),
+                                                        aulaDto
+                                                    );
+                                                })
+                                                .filter(aula => aula !== null);
+                                            console.log(
+                                                'Aulas cargadas:',
+                                                jornada.aulas
+                                            );
+                                            this._draw();
+                                            return jornada.aulas;
+                                        })
+                                        .catch(error => {
+                                            console.error(
+                                                'Error cargando aulas:',
+                                                error
+                                            );
+                                            jornada.aulas = [];
+                                            this._draw();
+                                            return [];
+                                        });
+                                })
+                            );
+                        })
+                        .catch(error => {
+                            console.error(
+                                'Error cargando jornadas:',
+                                error
+                            );
+                            prueba.jornadas = [];
+                            this._draw();
+                            return [];
+                        });
+
+                })
+
+            );
+
+        })
+        .catch(error => {
+            console.error(
+                'Error cargando datos:',
+                error
+            );
+            this.errorCargaDatos = true;
+            this._draw();
+        });
+
+}
 
     /**
      * Asigna a la variable global el idPrueba seleccionada
