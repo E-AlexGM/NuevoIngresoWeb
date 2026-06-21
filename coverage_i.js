@@ -8,7 +8,9 @@ const filtros = filtroUsuario.split(',').map(f => f.trim()).filter(Boolean);
 const DIRECTORIO_BASE_PRUEBAS = './test/js';
 const CARPETA_CODIGO_FUENTE = './src/js'; 
 const CARPETA_COBERTURA_TMP = './coverage/tmp';
-const ARCHIVO_INYECTOR_TMP = './.temp_inyector.js'; 
+const ARCHIVO_INYECTOR_TMP = './.temp_inyector.js';
+
+const backendIp = process.env.BACKEND_IP || 'localhost';
 
 const codigoInyector = `
 import fs from 'fs';
@@ -16,13 +18,13 @@ import vm from 'vm';
 
 global.window = global;
 global.location = { 
-    href: 'http://localhost/', 
+    href: 'http://' + process.env.BACKEND_IP || 'localhost' + '/', 
     search: '', 
     pathname: '/',
-    hostname: 'localhost',
-    host: 'localhost',
+    hostname: '${backendIp}',
+    host: '${backendIp}',
     protocol: 'http:',
-    origin: 'http://localhost'
+    origin: 'http://'+'${backendIp}'
 };
 
 if (typeof global.navigator === 'undefined') {
