@@ -1,6 +1,6 @@
 // service_worker.js
 
-const CACHE_NAME = 'ingreso-app-v1.0.0';
+const CACHE_NAME = 'ingreso-app-v1.0.1';
 
 const ARCHIVOS_CACHE = [
     '/',
