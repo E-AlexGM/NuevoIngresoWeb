@@ -1,3 +1,6 @@
 #coverage
 
 coverage/
+
+# Ignorar la carpeta .scannerwork generada por SonarQube
+.scannerwork/

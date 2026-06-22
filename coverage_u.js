@@ -137,7 +137,7 @@ for (const archivo of archivosAFiltrar) {
 
 console.log('\nGenerando reporte de cobertura final...');
 try {
-    const comandoReporte = `npx c8 report --clean false --temp-directory ${CARPETA_COBERTURA_TMP} --reporter=html --reporter=text --all --src ${CARPETA_CODIGO_FUENTE} --include "src/js/control/**" --include "src/js/entity/**" --exclude ".temp_inyector.js"`;
+    const comandoReporte = `npx c8 report --clean false --temp-directory ${CARPETA_COBERTURA_TMP} --reporter=html --reporter=text --reporter=lcov --all --src ${CARPETA_CODIGO_FUENTE} --include "src/js/control/**" --include "src/js/entity/**" --exclude ".temp_inyector.js"`;
     execSync(comandoReporte, { stdio: 'inherit' });
     console.log('\nProceso completado. Revisa el archivo ./coverage/index.html');
 } catch (error) {
