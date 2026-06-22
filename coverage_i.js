@@ -81,10 +81,6 @@ process.on('beforeExit', () => {
 `;
 fs.writeFileSync(ARCHIVO_INYECTOR_TMP, codigoInyector);
 
-if (fs.existsSync(CARPETA_COBERTURA_TMP)) {
-    fs.rmSync(CARPETA_COBERTURA_TMP, { recursive: true, force: true });
-}
-
 const todosLosArchivosDePrueba = [];
 
 function buscarPruebas(directorio) {
