@@ -1,5 +1,5 @@
 import DefaultDAO from "./default_dao.js";
-
+// Comentario de prueba pipeline
 class AreaDAO extends DefaultDAO {
     constructor() {
         super();
