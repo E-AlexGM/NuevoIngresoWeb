@@ -10,7 +10,7 @@ const CARPETA_CODIGO_FUENTE = './src/js';
 const CARPETA_COBERTURA_TMP = './coverage/tmp';
 const ARCHIVO_INYECTOR_TMP = './.temp_inyector.js';
 
-const backendIp = process.env.BACKEND_IP || 'localhost';
+const backendIp = 'localhost';
 
 const codigoInyector = `
 import fs from 'fs';
