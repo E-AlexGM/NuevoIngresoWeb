@@ -10,7 +10,7 @@ const CARPETA_CODIGO_FUENTE = './src/js';
 const CARPETA_COBERTURA_TMP = './coverage/tmp';
 const ARCHIVO_INYECTOR_TMP = './.temp_inyector.js';
 
-const backendIp = 'localhost';
+const backendIp = '127.0.0.1';
 
 const codigoInyector = `
 import fs from 'fs';
@@ -18,7 +18,7 @@ import vm from 'vm';
 
 global.window = global;
 global.location = { 
-    href: 'http://' + process.env.BACKEND_IP || 'localhost' + '/', 
+    href: 'http://${backendIp}/',
     search: '', 
     pathname: '/',
     hostname: '${backendIp}',
