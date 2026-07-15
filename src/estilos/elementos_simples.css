@@ -1,0 +1,109 @@
+:root, :host {
+    --color-acento: #922b21;       
+    --color-acento-hover: #7c2d12; 
+    --color-borde: #e7e5e4;
+    --color-texto: #1f2937;
+    --color-texto-light: #5b6472;
+    --color-bg-input: #ffffff;
+    --color-bg-hover: #f3f4f6;     
+    --color-bg-secundario: #f8fafc; 
+}
+
+.campo-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1.25rem;
+}
+
+.campo-formulario label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-texto-light);
+}
+
+.input-base {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--color-texto);
+    background-color: var(--color-bg-input);
+    border: 1px solid var(--color-borde);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box; 
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+}
+
+.mensaje-sin-resultados {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #6b7280;
+    font-size: 1rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px dashed #d1d5db;
+    margin: 1rem 0;
+}
+
+.input-base:focus {
+    border-color: var(--color-acento);
+    box-shadow: 0 0 0 3px rgba(146, 43, 33, 0.1); 
+}
+
+.input-base::placeholder {
+    color: #a8a29e;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; 
+    padding: 0.75rem 1.5rem; /* Tamaño estandarizado */
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    outline: none;
+}
+
+.btn-primario {
+    background-color: var(--color-acento);
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(146, 43, 33, 0.2);
+}
+
+.btn-primario:hover {
+    background-color: var(--color-acento-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px -1px rgba(146, 43, 33, 0.3);
+}
+
+.btn-primario:active {
+    transform: translateY(0);
+}
+
+.btn-secundario {
+    background-color: transparent;
+    color: var(--color-acento);
+    border: 2px solid var(--color-acento); 
+}
+
+.btn-secundario:hover {
+    background-color: var(--color-acento);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(146, 43, 33, 0.2);
+}
+
+.btn-secundario:active {
+    transform: translateY(0);
+    background-color: var(--color-acento-hover);
+    border-color: var(--color-acento-hover);
+}

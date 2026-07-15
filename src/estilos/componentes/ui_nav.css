@@ -1,0 +1,134 @@
+:host {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+.menu-navegacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    position: relative;
+}
+
+.nav-logo-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+}
+
+.nav-logo {
+    height: 2.8rem;
+    width: 2.8rem;
+}
+
+.enlace-nav {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 1.15rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.enlace-nav:hover {
+    color: #922b21;
+}
+
+.enlace-nav::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0.1875rem;
+    background: linear-gradient(90deg, #922b21, #b03a2e);
+    border-radius: 0.25rem 0.25rem 0 0;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+}
+
+.enlace-nav:hover::after {
+    transform: scaleX(1);
+}
+
+.enlace-nav.activo {
+    color: #922b21;
+    font-weight: 700;
+}
+
+.enlace-nav.activo::after {
+    transform: scaleX(1);
+}
+
+.btn-instalar {
+    position: absolute;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #922b21, #b03a2e);
+    color: #fff;
+    border: none;
+    padding: 0.65rem 1.3rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    visibility: visible;
+}
+
+.btn-instalar.oculto {
+    visibility: hidden;  
+}
+
+.btn-instalar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(146, 43, 33, 0.2);
+}
+
+.btn-instalar:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 55rem) {
+    .menu-navegacion {
+        gap: 1.25rem;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .menu-navegacion::-webkit-scrollbar {
+        display: none; 
+    }
+
+    .enlace-nav {
+        padding: 0.9rem 0;
+        white-space: nowrap; 
+    }
+
+    .nav-logo {
+        height: 2.2rem;
+        width: 2.2rem;
+        flex-shrink: 0; 
+    }
+
+    .btn-instalar {
+        position: static;
+        flex-shrink: 0; 
+    }
+}

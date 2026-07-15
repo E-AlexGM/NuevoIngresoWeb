@@ -1,0 +1,205 @@
+/* --- ESTRUCTURA PRINCIPAL --- */
+.grid-tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+    font-family: Arial, system-ui, sans-serif;
+    margin-top: 1.5rem;
+    grid-auto-rows: 1fr;
+}
+
+.tarjeta-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* --- ENCABEZADOS (Estilo .eyebrow y .cabecera-texto) --- */
+.tarjeta-etiqueta {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #922b21; /* El rojo de tu eyebrow */
+}
+
+.tarjeta-titulo {
+    margin: 0.25rem 0 0.5rem 0;
+    font-size: 1.15rem;
+    color: #1f2937;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.tarjeta-separador {
+    border: 0;
+    height: 1px;
+    background-color: #eef2f7; /* Igual a tu tarjeta-clave */
+    margin: 0;
+}
+
+/* --- SECCIONES INTERNAS (Estilo .resumen-item y .arbol-vacio) --- */
+.tarjeta-seccion {
+    background: #f8fafc; /* Gris azulado del árbol */
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Grid para las fechas (Estilo .cabecera-resumen) */
+.tarjeta-fechas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+}
+
+.fecha-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.tarjeta-subtitulo {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #64748b; /* Tonos del árbol */
+    font-weight: 600;
+    margin: 0;
+}
+
+.tarjeta-texto {
+    margin: 0;
+    color: #111827;
+    font-size: 0.95rem;
+    font-weight: 600; /* Para que resalte como .resumen-item strong */
+}
+
+/* --- DESPLEGABLE DE SEDES --- */
+.tarjeta-desplegable {
+    width: 100%;
+}
+
+.tarjeta-desplegable summary {
+    list-style: none;
+    outline: none;
+}
+.tarjeta-desplegable summary::-webkit-details-marker {
+    display: none;
+}
+
+.interactivo {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #334155;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.interactivo:hover {
+    color: #0ea5e9;
+}
+
+.icono-flecha {
+    font-size: 0.7rem;
+    color: #64748b;
+    transition: transform 0.3s ease;
+}
+
+.tarjeta-desplegable[open] .icono-flecha {
+    transform: rotate(180deg);
+}
+
+/* --- LAS GUÍAS VISUALES (Estilo .nodo-hijos) --- */
+.desplegable-contenido {
+    margin-top: 0.875rem;
+    padding-top: 0.875rem;
+    border-top: 1px dashed #cbd5e0; /* Separador sutil */
+}
+
+.tarjeta-lista {
+    list-style: none;
+    margin: 0 0 0 0.5rem; /* Margen para empujar y hacer espacio para la guía */
+    padding: 0 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+}
+
+/* Línea vertical principal (El tallo del árbol) */
+.tarjeta-lista::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.25rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background-color: #cbd5e0;
+    border-radius: 1rem;
+}
+
+.tarjeta-lista li {
+    font-size: 0.85rem;
+    color: #475569;
+    position: relative;
+    line-height: 1.4;
+}
+
+.mensaje-sin-pruebas {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6b7280;
+    font-size: 1.1rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 1px dashed #d1d5db;
+    margin: 2rem auto;
+    max-width: 500px;
+    width: 100%;
+}
+
+.mensaje-sin-pruebas::before {
+    content: "📋";
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Línea horizontal (La rama del árbol) conectando cada sede */
+.tarjeta-lista li::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 0.6rem;
+    width: 0.75rem;
+    height: 2px;
+    background-color: #cbd5e0;
+}
+
+.tarjeta-lista b {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.tarjeta-vacio {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-style: italic;
+    margin: 0;
+}
+
+ui-card {
+    display: block;
+    height: 100%;
+}

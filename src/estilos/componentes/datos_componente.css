@@ -1,0 +1,70 @@
+/* estilos/componentes/datos_componente.css */
+.tarjeta-seccion {
+    background: #ffffff;
+    border-radius: 1.25rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 0.625rem 1.5rem rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    font-family: Arial, sans-serif;
+}
+
+.tarjeta-header {
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+    color: #922b21;
+    padding: 1.25rem 1.375rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.tarjeta-body {
+    padding: 1.125rem 1.375rem 1.375rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.grid-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9375rem;
+}
+
+.col-completa {
+    grid-column: 1 / -1;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #1f2937;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: #94a3b8;
+}
+
+.form-input:focus {
+    border-color: #f1d9d5;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 0.1875rem rgba(146, 43, 33, 0.1);
+}
+
+@media (max-width: 30rem) {
+    .grid-inputs { grid-template-columns: 1fr; }
+    .col-completa { grid-column: auto; }
+    .tarjeta-body { padding: 0.875rem; }
+}

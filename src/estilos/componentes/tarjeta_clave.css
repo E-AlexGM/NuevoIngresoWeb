@@ -1,0 +1,100 @@
+:host {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.tarjeta-clave {
+    border-radius: 1.25rem;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 0.625rem 1.5rem rgba(15, 23, 42, 0.05);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.tarjeta-clave summary {
+    list-style: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.tarjeta-clave summary::-webkit-details-marker {
+    display: none;
+}
+
+.clave-resumen {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.125rem;
+    padding: 1.25rem 1.375rem;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfc 100%);
+}
+
+.clave-texto h2 {
+    margin: 0.5rem 0 0;
+    font-size: 1.1rem;
+    color: #1f2937;
+}
+
+.clave-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.75rem;
+    padding: 0 0.625rem;
+    border-radius: 62.4375rem;
+    background: #922b21;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.clave-metas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    align-items: center;
+    color: #475569;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.meta-alerta, .meta-ok {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.875rem;
+    padding: 0 0.6875rem;
+    border-radius: 62.4375rem;
+}
+
+.meta-ok { background: #ecfdf3; color: #15803d; }
+.meta-alerta { background: #fffbeb; color: #92400e; }
+
+.tarjeta-clave[open] .clave-resumen {
+    border-bottom: 1px solid #eef2f7;
+}
+
+.clave-contenido {
+    padding: 1.125rem 1.375rem 1.375rem;
+}
+
+.estado-advertencia {
+    padding: 0.75rem;
+    margin-bottom: 0.9375rem;
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 37.5rem) {
+    .clave-resumen {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .clave-metas { justify-content: flex-start; }
+}
